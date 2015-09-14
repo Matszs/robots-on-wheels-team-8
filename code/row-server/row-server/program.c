@@ -20,7 +20,7 @@ struct sockaddr_in server;
 int socketConnection;
 
 int main() {
-    init();
+//    init();
 	testEngine();
     return 0;
 }
