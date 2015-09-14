@@ -2,30 +2,35 @@
 #include <wiringPiI2C.h>
 int fd;
 
+void writeData(int * data, int lenght){
+	for (int i = 0; i<lenght; i++) {
+		wiringPiI2CWrite(fd, data[i]);
+		usleep(1);
+	}
+}
+
 void forward(int speed){
-	uint8_t forward[7] = {7 ,3 ,speed, 2 ,3 ,speed ,2};
-	wiringPiI2CWrite(fd, forward);
+	int forward[7] = {7 ,3 ,speed, 2 ,3 ,speed ,2};
+	writeData(&forward[0], 7);
 }
 void reverse(int speed){
-	uint8_t reverse[7] = {7 ,3 ,speed, 1 ,3 ,speed ,1};
-	wiringPiI2CWrite(fd, reverse);
+	int reverse[7] = {7 ,3 ,speed, 1 ,3 ,speed ,1};
+	writeData(&reverse[0], 7);
 }
 void stop(){
-	uint8_t stop[7] = {7 ,0 ,0, 0 ,0 ,0 ,0};
-	wiringPiI2CWrite(fd, stop);
+	int stop[7] = {7 ,0 ,0, 0 ,0 ,0 ,0};
+	writeData(&stop[0], 7);
 }
 void init(){
-	uint8_t Totalpower[2]={4,250};
-	uint8_t Softstart[3]={0x91,23,0};
+	int Totalpower[2]={4,250};
+	int Softstart[3]={0x91,23,0};
 	fd = wiringPiI2CSetup(0x32);
 	if (fd < 0){
 		printf("wiringPiI2CSetup failed.\n");
 	}
-	if (!wiringPiI2CWrite(fd, Totalpower)){
-		printf("gpioI2cWriteData failed\n");
-	}
+	writeData(&Totalpower[0], 2);
 	
-	wiringPiI2CSetup(fd, Softstart);
+	writeData(&Softstart[0], 3);
 
 }
 
