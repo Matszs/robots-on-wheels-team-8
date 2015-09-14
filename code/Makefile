@@ -8,8 +8,8 @@ LD_FLAGS=-L/usr/local/lib
 
 OUTDIR=./build
 TARGET=robot
+SRC=robot
 
-all:  $(TARGET) 
-
-$(TARGET):    $(TARGET).c 
-	$(CC) $(CCFLAGS) $(LD_FLAGS) $(LD_LIBS) -o $(OUTDIR)/$(TARGET)
+all:
+	mkdir -p $(OUTDIR)
+	$(CC) $(CCFLAGS) $(LD_FLAGS) $(LD_LIBS) -o $(OUTDIR)/$(TARGET) $(SRC)/program.c
