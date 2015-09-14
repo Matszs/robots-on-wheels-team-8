@@ -28,3 +28,18 @@ void init(){
 	wiringPiI2CSetup(fd, Softstart);
 
 }
+
+void testEngine(){
+
+	stop();
+	usleep(10000);
+	forward(0xa5);
+	usleep(10000);
+	stop();
+	usleep(10000);
+	reverse(0xa5);
+	usleep(10000);
+	stop();
+	
+	
+}

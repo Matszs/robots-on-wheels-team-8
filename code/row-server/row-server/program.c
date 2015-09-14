@@ -12,6 +12,8 @@
 #include<sys/socket.h>
 #include<arpa/inet.h> //inet_addr
 
+#include "engine.c"
+
 void init();
 
 struct sockaddr_in server;
@@ -19,6 +21,7 @@ int socketConnection;
 
 int main() {
     init();
+	testEngine();
     return 0;
 }
 
