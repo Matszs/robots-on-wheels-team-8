@@ -57,9 +57,17 @@
 		B0BBABAE1BA692F20025AE73 /* row-server */ = {
 			isa = PBXGroup;
 			children = (
+				B0BBABB61BA812820025AE73 /* plugins */,
 				B0BBABAF1BA692F20025AE73 /* program.c */,
 			);
 			path = "row-server";
+			sourceTree = "<group>";
+		};
+		B0BBABB61BA812820025AE73 /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = plugins;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
