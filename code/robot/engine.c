@@ -67,7 +67,7 @@ void testEngine(){
 	printf("stop.\n");
 	stop();
 	sleep(1);
-	printf("left.\n");
+	printf("right.\n");
 	right(0xa5);
 	sleep(1);
 	printf("stop.\n");
