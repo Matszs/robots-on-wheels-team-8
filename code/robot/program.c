@@ -38,7 +38,7 @@ int main() {
 void run() {
     // todo: perform default connections ...
     initEngine();
-    
+	
     while(1) {
        
     }
@@ -76,10 +76,6 @@ void onCommand(char *commandData) {
 		printf("STOP");
 		//stop();
 	}
-    
-
-
-    commandData = '\0';
 }
 
 void init() {
@@ -138,6 +134,9 @@ void *listenForConnections(void *arg) {
         
         while( (read_size = recv(userSocket, client_message, 3000, 0)) > 0 ){
             onCommand(client_message);
+			for (int i = 0; i < read_size; i++) {
+				client_message[i] = '\0';
+			}
         }
         
         if(read_size == 0) {
