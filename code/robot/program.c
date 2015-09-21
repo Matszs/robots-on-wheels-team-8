@@ -77,7 +77,9 @@ void onCommand(char *commandData) {
 		//stop();
 	}
     
-    
+
+
+    commandData = '\0';
 }
 
 void init() {
