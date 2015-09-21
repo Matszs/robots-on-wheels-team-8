@@ -46,13 +46,17 @@ void run() {
 
 void onCommand(char *commandData) {
 
+	size_t ln = strlen(commandData) - 1;
+	if (commandData[ln] == '\n')
+		commandData[ln] = '\0';
+
 
     printf("%s\n", commandData);
 
 	// TODO: prefix commands (engine_left(), engine_right())
 
 
-	printf("%d === %d  |||>>>  %d \n", strlen(commandData), strlen("forward"), strcmp(commandData, "forward\n"));
+	printf("%d === %d  |||>>>  %d \n", strlen(commandData), strlen("forward"), strcmp(commandData, "forward"));
 
     if(strcmp(commandData, "forward") == 0) {
     	printf("FORWARD");
