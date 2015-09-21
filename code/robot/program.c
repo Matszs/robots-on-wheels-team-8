@@ -62,19 +62,19 @@ void onCommand(char *commandData) {
 
     if(strcmp(commandData, "forward") == 0) {
     	printf("FORWARD");
-    	//forward(165);
+    	forward(70);
     } else if(strcmp(commandData, "reverse") == 0) {
    		printf("REVERSE");
-		//reverse(165);
+		reverse(70);
 	} else if(strcmp(commandData, "left") == 0) {
 		printf("LEFT");
-		//left(165);
+		left(70);
 	} else if(strcmp(commandData, "right") == 0) {
 		printf("RIGHT");
-		//right(165);
+		right(70);
 	} else if(strcmp(commandData, "stop") == 0) {
 		printf("STOP");
-		//stop();
+		stop();
 	}
 }
 
@@ -110,7 +110,7 @@ void *listenForConnections(void *arg) {
         int c;
         long read_size;
         struct sockaddr_in client;
-        char client_message[3000];
+        char client_message[1024];
         
         c = sizeof(struct sockaddr_in);
         
@@ -132,7 +132,7 @@ void *listenForConnections(void *arg) {
         
         printf("Connected!");
         
-        while( (read_size = recv(userSocket, client_message, 3000, 0)) > 0 ){
+        while( (read_size = recv(userSocket, client_message, 1024, 0)) > 0 ){
             onCommand(client_message);
 			for (int i = 0; i < read_size; i++) {
 				client_message[i] = '\0';
