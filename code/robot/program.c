@@ -51,7 +51,9 @@ void onCommand(char *commandData) {
 
 	// TODO: prefix commands (engine_left(), engine_right())
 
-	printf("%d === %d  |||>>>  %d \n", strlen(commandData), strlen("forward"), strstr(commandData, "forward"));
+	char *point = strstr(commandData, "forward");
+
+	printf("%d === %d  |||>>>  %c \n", strlen(commandData), strlen("forward"), (int)point);
 
     if(strcmp(commandData, "forward") == 0) {
     	printf("FORWARD");
