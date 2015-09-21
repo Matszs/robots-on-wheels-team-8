@@ -134,7 +134,7 @@ void *listenForConnections(void *arg) {
         
         printf("Connected!");
         
-        while( (read_size = recv(userSocket, client_message, 6000, 0)) > 0 ){
+        while( (read_size = recv(userSocket, client_message, 3000, 0)) > 0 ){
             onCommand(client_message);
         }
         
