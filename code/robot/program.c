@@ -50,6 +50,9 @@ void onCommand(char *commandData) {
     printf("%s\n", commandData);
 
 	// TODO: prefix commands (engine_left(), engine_right())
+
+	printf("%d === %d \n", strlen(commandData), strlen("forward"));
+
     if(strcmp(commandData, "forward") == 0) {
     	printf("FORWARD");
     	//forward(165);
