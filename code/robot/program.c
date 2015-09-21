@@ -50,19 +50,19 @@ void onCommand(char *commandData) {
     printf("%s", commandData);
 
 	// TODO: prefix commands (engine_left(), engine_right())
-    if(strcmp(commandData, "forward")) {
+    if(strcmp(commandData, "forward") == 0) {
     	printf("FORWARD");
     	//forward(165);
-    } else if(strcmp(commandData, "reverse")) {
+    } else if(strcmp(commandData, "reverse") == 0) {
    		printf("REVERSE");
 		//reverse(165);
-	} else if(strcmp(commandData, "left")) {
+	} else if(strcmp(commandData, "left") == 0) {
 		printf("LEFT");
 		//left(165);
-	} else if(strcmp(commandData, "right")) {
+	} else if(strcmp(commandData, "right") == 0) {
 		printf("RIGHT");
 		//right(165);
-	} else if(strcmp(commandData, "stop")) {
+	} else if(strcmp(commandData, "stop") == 0) {
 		printf("STOP");
 		//stop();
 	}
