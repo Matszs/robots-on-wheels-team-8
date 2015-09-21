@@ -47,7 +47,7 @@ void run() {
 void onCommand(char *commandData) {
 
 
-    printf("%s", commandData);
+    printf("%s\n", commandData);
 
 	// TODO: prefix commands (engine_left(), engine_right())
     if(strcmp(commandData, "forward") == 0) {
