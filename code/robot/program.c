@@ -51,13 +51,13 @@ void onCommand(char *commandData) {
 
 	// TODO: prefix commands (engine_left(), engine_right())
     if(commandData == "forward") {
-    	forward();
+    	forward(165);
     } else if(commandData == "revere") {
-		reverse();
+		reverse(165);
 	} else if(commandData == "left") {
-		left();
+		left(165);
 	} else if(commandData == "right") {
-		right();
+		right(165);
 	} else if(commandData == "stop") {
 		stop();
 	}
