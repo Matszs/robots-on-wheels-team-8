@@ -46,9 +46,11 @@ void run() {
 
 void onCommand(char *commandData) {
 
-	size_t ln = strlen(commandData) - 1;
-	if (commandData[ln] == '\n')
-		commandData[ln] = '\0';
+	size_t ln = strlen(commandData);
+	if (commandData[ln - 1] == '\n')
+		commandData[ln - 1] = '\0';
+	if (commandData[ln - 2] == '\r')
+		commandData[ln - 2] = '\0';
 
 
     printf("%s\n", commandData);
