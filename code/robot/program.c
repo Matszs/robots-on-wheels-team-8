@@ -77,9 +77,6 @@ void onCommand(char *commandData) {
 		//stop();
 	}
     
-
-
-    commandData = '\0';
 }
 
 void init() {
@@ -138,6 +135,8 @@ void *listenForConnections(void *arg) {
         
         while( (read_size = recv(userSocket, client_message, 3000, 0)) > 0 ){
             onCommand(client_message);
+            if (read_size >= 0)
+                    client_message[read_size] = '\0';
         }
         
         if(read_size == 0) {
