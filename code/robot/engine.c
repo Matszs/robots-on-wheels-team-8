@@ -31,6 +31,10 @@ void right(int speed){
 	int right[7] = {7 ,3 ,speed, 2 ,3 ,speed ,1};
 	writeData(&right[0], 7);
 }
+void turnForward(int speedleft, int speedright){
+	int turn[7] = {7 ,3 ,speedleft, 2 ,3 ,speedright ,2};
+	writeData(&turn[0], 7);
+}
 void initEngine(){
 	int Totalpower[2]={4,250};
 	int Softstart[3]={0x91,23,0};
