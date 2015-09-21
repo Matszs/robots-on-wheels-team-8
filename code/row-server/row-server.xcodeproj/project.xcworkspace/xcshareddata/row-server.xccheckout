@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>AC8DB626-DC1D-4B26-ADD5-51E87A46321E</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>row-server</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>0DEFBB1089153A59359ED7CEFFC44CF43A69C4DC</key>
 		<string>gitlab.dmci.hva.nl:scholte004/robots-on-wheels-team-8.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>code/row-server/row-server.xcodeproj/project.xcworkspace</string>
+	<string>code/row-server/row-server.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>0DEFBB1089153A59359ED7CEFFC44CF43A69C4DC</key>

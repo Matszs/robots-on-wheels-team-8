@@ -45,6 +45,7 @@ void run() {
 
 void onCommand(char *commandData) {
     
+    printf("%s", commandData);
     
     
 }
@@ -81,7 +82,7 @@ void *listenForConnections(void *arg) {
         int c;
         long read_size;
         struct sockaddr_in client;
-        char client_message[1];
+        char client_message[3000];
         
         c = sizeof(struct sockaddr_in);
         
