@@ -11,7 +11,7 @@
 int fd;
 
 void writeData(int * data, int lenght){
-	int i;
+    int i;
 	for (i = 0; i < lenght; i++) {
 		wiringPiI2CWrite(fd, data[i]);
 	}
