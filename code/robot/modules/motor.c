@@ -10,7 +10,8 @@
 #include "motor.h"
 
 void writeData(int * data, int lenght){
-	for (int i = 0; i < lenght; i++) {
+    int i;
+	for (i = 0; i < lenght; i++) {
 		wiringPiI2CWrite(fd, data[i]);
 	}
 }
