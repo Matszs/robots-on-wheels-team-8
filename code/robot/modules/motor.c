@@ -10,32 +10,41 @@
 #include "motor.h"
 int fd;
 
-void writeData(int * data, int lenght){
+void writeData(uint8_t * data, int lenght){
     int i;
 	for (i = 0; i < lenght; i++) {
+		printf("%d\n", data[i]);
 		wiringPiI2CWrite(fd, data[i]);
 	}
+	printf("\n\n\n");
 }
 
 void unpackMovement(uint8_t getal, movement *direction){
     uint8_t links, rechts;
 
-
-    links = getal >> 4 & 15;
-    rechts = getal & 15;
+	//1010 1001
+	//1001 0000
+	//0000 1001
+    rechts = (getal << 4) >> 4;
+    links = getal >> 4;
     direction->Left = links;
     direction->Right = rechts;
 }
 
 void MotorControl(movement *direction, void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t)){
+   // 0000 (links)  		0000 (rechts)
+   // ^ richting			^ richting
+   //  ^^^ snelheid			 ^^^ snelheid
 
-    uint8_t RijrichtingLinks = direction->Left & 8;
-    uint8_t RijrichtingRechts = direction->Right & 8;
+   // 0001 0001
+
+    uint8_t RijrichtingLinks = direction->Left >> 3 & 1;
+    uint8_t RijrichtingRechts = direction->Right >> 3 & 1;
     uint8_t SnelheidLinks = direction->Left & 7;
     uint8_t SnelheidRechts = direction->Right & 7;
 
-    uint8_t voorachterLinks = RijrichtingLinks ? 1 : 0;
-    uint8_t voorachterRechts = RijrichtingRechts ? 1 : 0;
+    uint8_t voorachterLinks = RijrichtingLinks;
+    uint8_t voorachterRechts = RijrichtingRechts;
 
 
     motorCallback(voorachterLinks, SnelheidLinks, voorachterRechts, SnelheidRechts);
@@ -66,18 +75,18 @@ void MotorcontrolMovement(uint8_t voorachterLinks, uint8_t SnelheidLinks, uint8_
         MotorC[0] = 7;
         MotorC[1] = 3;
         MotorC[2] = speedTable[SnelheidLinks];
-        MotorC[3] = richtingLinks;
+        MotorC[3] = (SnelheidLinks == 0 ? 0 : richtingLinks);
         MotorC[4] = 3;
         MotorC[5] = speedTable[SnelheidRechts];
-        MotorC[6] = richtingRechts;
+        MotorC[6] = (SnelheidRechts == 0 ? 0 : richtingRechts);
 
     }
 	writeData(&MotorC[0], 7);
 }
 
 void MotorInit() {
-	int Totalpower[2]={4,250};
-	int Softstart[3]={0x91,23,0};
+	uint8_t Totalpower[2]={4,250};
+	uint8_t Softstart[3]={0x91,23,0};
 	fd = wiringPiI2CSetup(0x32);
 	if (fd < 0){
 		printf("wiringPiI2CSetup failed.\n");

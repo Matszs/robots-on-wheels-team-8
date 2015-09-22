@@ -1,5 +1,5 @@
 CC=gcc
-CCFLAGS=-std=gnu99 -Wall -Werror -g -I/usr/local/include
+CCFLAGS=
 
 
 LD_LIBS= -lwiringPi -lpthread -lwiringPiDev -lm 
