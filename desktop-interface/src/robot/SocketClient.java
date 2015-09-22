@@ -19,7 +19,7 @@ public class SocketClient {
         this.port = 1212;
     }
     public SocketClient() {
-        this.url = "localhost";
+        this.url = "pi.akoo.nl";
         this.port = 1212;
     }
     public void setUp() {
@@ -31,8 +31,11 @@ public class SocketClient {
             this.outputStream = new BufferedWriter(new OutputStreamWriter(os));
             this.inputStream = new BufferedReader(new InputStreamReader(is));
 
+
+
         }catch(IOException e)
         {
+
             e.printStackTrace();
         }
 
@@ -44,6 +47,11 @@ public class SocketClient {
     public void write(String data) throws IOException {
         this.outputStream.write(data);
         this.outputStream.newLine();
+        this.outputStream.flush();
+    }
+
+    public void write(int data) throws IOException {
+        this.outputStream.write(data);
         this.outputStream.flush();
     }
 
