@@ -18,7 +18,6 @@
 #include <pthread.h> // threads
 #include <wiringPi.h>
 
-#include "rpiGpio.h"
 #include "socket.c"
 #include "modules/motor.c"
 
@@ -44,16 +43,11 @@ void onCommand(char *commandData) {
 	void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
 	movement direction;
 
-	printf("%d", (uint8_t)commandData[0]);
+	commandData[strcspn(commandData, "\r\n")] = 0;
+	commandData[0] = atoi(&commandData[0]);
 
-	if((uint8_t)commandData[0] == 113) {
-		unpackMovement(0, &direction);
-        MotorControl(&direction, *motorCallback);
-	} else {
-
-		unpackMovement((uint8_t)commandData[0], &direction);
-		MotorControl(&direction, *motorCallback);
-    }
+	unpackMovement((uint8_t)commandData[0], &direction);
+	MotorControl(&direction, *motorCallback);
 
 	// TODO: add engine ...
 }

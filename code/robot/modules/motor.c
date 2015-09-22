@@ -12,6 +12,7 @@ int fd;
 
 void writeData(uint8_t * data, int lenght){
     int i;
+	printf("\n");
 	for (i = 0; i < lenght; i++) {
 		printf("%d\n", data[i]);
 		wiringPiI2CWrite(fd, data[i]);
