@@ -2,7 +2,7 @@ CC=gcc
 CCFLAGS=-std=gnu99 -Wall -Werror -g -I/usr/local/include
 
 
-LD_LIBS= -lwiringPi -lpthread -lwiringPiDev -lm -lrpigpio
+LD_LIBS= -lwiringPi -lpthread -lwiringPiDev -lm 
 LD_FLAGS=-L/usr/local/lib
 
 

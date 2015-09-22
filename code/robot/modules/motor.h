@@ -10,6 +10,7 @@
 #define __Robot__control__
 
 #include <stdio.h>
+#include <wiringPi.h>
 
 uint8_t speedTable[7] = {0x0,0x46,0x59,0x6c,0x7f,0x92,0xa5};
 

@@ -9,6 +9,12 @@
 
 #include "motor.h"
 
+void writeData(int * data, int lenght){
+	for (int i = 0; i < lenght; i++) {
+		wiringPiI2CWrite(fd, data[i]);
+	}
+}
+
 void unpackMovement(uint8_t getal, movement *direction){
     uint8_t links, rechts;
 
@@ -64,24 +70,18 @@ void MotorcontrolMovement(uint8_t voorachterLinks, uint8_t SnelheidLinks, uint8_
         MotorC[6] = richtingRechts;
 
     }
-    gpioI2cWriteData(&MotorC[0],7);
-
+	writeData(&MotorC[0], 7);
 }
 
 void MotorInit() {
-	uint8_t Totalpower[2]={4,250};
-	uint8_t Softstart[3]={0x91,23,0};
-
-	if (gpioSetup()!= OK)
-		dbgPrint(DBG_INFO, "gpioSetup failed\n");
-	else if (gpioI2cSetup() != OK)
-		dbgPrint(DBG_INFO, "gpioI2cSetup failed\n");
-
-	if (gpioI2cSet7BitSlave(0x32) != OK)
-		dbgPrint(DBG_INFO, "gpioI2cSet7BitSlave failed.\n");
-
-	if (gpioI2cWriteData(&Totalpower[0], 2) != OK)
-		dbgPrint(DBG_INFO, "gpioI2cWriteData failed\n");
-
-	gpioI2cWriteData(&Softstart[0],3);
+	int Totalpower[2]={4,250};
+	int Softstart[3]={0x91,23,0};
+	fd = wiringPiI2CSetup(0x32);
+	if (fd < 0){
+		printf("wiringPiI2CSetup failed.\n");
+	}
+	writeData(&Totalpower[0], 2);
+	
+	writeData(&Softstart[0], 3);
+	
 }
