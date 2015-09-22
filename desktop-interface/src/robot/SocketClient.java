@@ -52,6 +52,7 @@ public class SocketClient {
 
     public void write(int data) throws IOException {
         this.outputStream.write(data);
+        this.outputStream.newLine();
         this.outputStream.flush();
     }
 
