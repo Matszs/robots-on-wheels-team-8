@@ -47,8 +47,8 @@ public class Main  {
 				BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 				String input = inFromUser.readLine();
 				if(input != "q") {
-//					int inputParsed = Integer.parseInt(input);
-					sc.write(input);
+					int inputParsed = Integer.parseInt(input);
+					sc.write(inputParsed);
 				} else {
 					running = false;
 				}
