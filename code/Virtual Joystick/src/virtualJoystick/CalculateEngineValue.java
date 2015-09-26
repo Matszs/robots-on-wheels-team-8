@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+/* This code was created by Suzanne Peerdeman, IT201, and is therefore creative
+property of the HVA (University of applied sciences, Amsterdam). Being creative 
+property of the HVA, this code may be used by all students, please do not remove 
+this header!
+*/
 package virtualJoystick;
-/**
- *
- * @author Suzanne
- */
+
 public class CalculateEngineValue {
 
     public static CalculateData calculate(double x, double y) {
@@ -27,7 +23,7 @@ public class CalculateEngineValue {
         double pointDelta = Math.pow(deltaX,2)+ Math.pow(deltaY, 2);
             
         double dis = Math.sqrt(pointDelta); 
-        
+            
             return new CalculateData(deg, dis);
     }
     
