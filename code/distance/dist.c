@@ -10,15 +10,19 @@
 
 int main(void)
 {
-    uint8_t TxData1[2] = {00, 0x51}; //add second array element; read the datasheet of the srf02
+    uint8_t TxData1[2] = {00, 81}; //add second array element; read the datasheet of the srf02
     uint8_t TxData2[1] = {0x03}; //What is the function of memory location 3?; see datasheet srf02
     uint8_t low=50;
+
+
 
     if (gpioSetup()!= OK)
            dbgPrint(DBG_INFO, "gpioSetup failed.\n");
 
+
     else if (gpioI2cSetup() != OK)
             dbgPrint(DBG_INFO, "gpioI2cSetup failed.\n");
+
 
     if (gpioI2cSet7BitSlave(0x70) != OK)
             dbgPrint(DBG_INFO, "gpioI2cSet7BitSlave failed.\n");
@@ -26,15 +30,15 @@ int main(void)
 
     // set servo in mid position
     // servo pwm control wire must me connected to wiring pi GPIO number 1
-    wiringPiSetup();
-    pinMode(1,output);
-    digitalWrite(1,LOW);
-    pwmSetClock(500);  //add  explanation
+    //wiringPiSetup();
+    //pinMode(1,output);
+    //digitalWrite(1,LOW);
+    //pwmSetClock(500);  //add  explanation
 
-    softPwmCreate(1,0,500); //add explanation
-    softPwmWrite(1,14); //add explination
+    //softPwmCreate(1,0,500); //add explanation
+    //softPwmWrite(1,14); //add explination
 
-    usleep(1000);
+    //usleep(1000);
 
     while(1)
     {
