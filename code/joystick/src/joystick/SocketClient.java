@@ -1,3 +1,10 @@
+//
+//  SocketClient.java
+//
+//  Created by Ekko Scholtens on 14-09-15.
+//  Copyright (c) 2015 Ekko Scholtens. All rights reserved.
+//
+
 package joystick;
 
 import java.io.*;

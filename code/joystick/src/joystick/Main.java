@@ -1,3 +1,10 @@
+//
+//  Main.java
+//
+//  Created by Suzanne Peerderman on 14-09-15.
+//  Copyright (c) 2015 Suzanne Peerderman. All rights reserved.
+//
+
 package joystick;
 
 import javafx.application.Application;

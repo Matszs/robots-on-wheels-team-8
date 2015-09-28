@@ -49,11 +49,12 @@ void onCommand(char *commandData) {
 	void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
 	movement direction;
 
-	// The next line clears the input if commandData[0] = 10;
-	//commandData[strcspn(commandData, "\r\n")] = 0; // find location of \r\n and 'removes' it.
-
 	unpackMovement((uint8_t)commandData[0], &direction);
 	MotorControl(&direction, *motorCallback);
 
 	// TODO: add engine ...
+}
+
+void onDisconnect() {
+	MotorcontrolMovement(0, 0, 0, 0); // stop driving
 }

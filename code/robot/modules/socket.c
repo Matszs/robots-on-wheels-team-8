@@ -1,5 +1,12 @@
+//
+//  socket.c
+//
+//  Created by Mats Otten on 14-09-15.
+//  Copyright (c) 2015 Mats Otten. All rights reserved.
+//
 
 void onCommand(char *commandData);
+void onDisconnect();
 void *listenForConnections(void *arg);
 void run();
 
@@ -83,5 +90,7 @@ void *listenForConnections(void *arg) {
             close(userSocket);
             printf("Client error\n");
         }
+
+        onDisconnect();
     }
 }
