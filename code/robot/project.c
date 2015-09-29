@@ -41,10 +41,10 @@ void run() {
 	distanceInit();
 	speedInit();
 	
-    while(1) {
+    /*while(1) {
        printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
        sleep(1);
-    }
+    }*/
 }
 
 void onCommand(char *commandData) {
