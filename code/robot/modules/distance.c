@@ -16,14 +16,6 @@ void *distancePerformRead(void *arg);
 uint8_t distanceValue = 50;
 int distanceSetup;
 
-void writeDataDistance(uint8_t * data, int lenght){
-    int i;
-	for (i = 0; i < lenght; i++) {
-		int test = wiringPiI2CWrite(distanceSetup, data[i]);
-		printf("TEST: %d   Data: %d  \n", test, data[i]);
-	}
-}
-
 void distanceInit() {
 	distanceSetup = wiringPiI2CSetup(0x70);
 

@@ -18,6 +18,7 @@
 #include <arpa/inet.h> //inet_addr
 #include <pthread.h> // threads
 #include <wiringPi.h>
+#include <time.h>
 
 #include  "rpiGpio.h"
 #include  <softPwm.h>
@@ -25,6 +26,7 @@
 #include "modules/socket.c"
 #include "modules/motor.c"
 #include "modules/distance.c"
+#include "modules/speed.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -37,10 +39,11 @@ void run() {
 	socketInit();
 	MotorInit();
 	distanceInit();
+	speedInit();
 	
     while(1) {
-       printf("afstand: %d\n", distanceRead());
-       usleep(1000000);
+       printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
+       sleep(1);
     }
 }
 
