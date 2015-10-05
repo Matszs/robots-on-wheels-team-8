@@ -15,6 +15,7 @@
 int ticks = 0;
 double speed = 0;
 void interrupt (void) { ticks++; }
+void *measureSpeed();
 
 
 void speedInit() {
@@ -27,7 +28,7 @@ void speedInit() {
 	pthread_create(&speedThread, NULL, measureSpeed, NULL);
 }
 
-void measureSpeed (){
+void *measureSpeed (){
 	while (1) {
 		sleep(1);
 		speed = (11.0 * ticks) / 1000;
