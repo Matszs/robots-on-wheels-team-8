@@ -18,10 +18,15 @@
 #include <arpa/inet.h> //inet_addr
 #include <pthread.h> // threads
 #include <wiringPi.h>
+#include <time.h>
+#include  "rpiGpio.h" // remove when WiringPi fully included
+#include  <softPwm.h>
 
 #include "modules/socket.c"
 #include "modules/motor.c"
-
+#include "modules/distance.c"
+#include "modules/speed.c"
+#include "modules/compass.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -33,22 +38,29 @@ int main() {
 void run() {
 	socketInit();
 	MotorInit();
+	distanceInit();
+	speedInit();
+	compassInit();
 	
     while(1) {
-       
+       //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
+       sleep(1);
     }
 }
 
-void onCommand(char *commandData) {
+void onCommand(uint8_t opcode, char *commandData) {
 
-	void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
-	movement direction;
+	if(opcode == 1) {
+		void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
+		movement direction;
 
-	// The next line clears the input if commandData[0] = 10;
-	//commandData[strcspn(commandData, "\r\n")] = 0; // find location of \r\n and 'removes' it.
-
-	unpackMovement((uint8_t)commandData[0], &direction);
-	MotorControl(&direction, *motorCallback);
+		unpackMovement((uint8_t)commandData[0], &direction);
+		MotorControl(&direction, *motorCallback);
+	}
 
 	// TODO: add engine ...
+}
+
+void onDisconnect() {
+	MotorcontrolMovement(0, 0, 0, 0); // stop driving
 }
