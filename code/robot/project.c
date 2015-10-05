@@ -41,7 +41,7 @@ void run() {
 	distanceInit();
 	speedInit();
 	compassInit();
-	
+
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
        sleep(1);
