@@ -24,7 +24,7 @@ public class SocketClient {
         this.port = 1212;
     }
     public SocketClient() {
-        this.url = "192.168.1.100";
+        this.url = "pi.akoo.nl";
         this.port = 1212;
     }
     public void setUp() {

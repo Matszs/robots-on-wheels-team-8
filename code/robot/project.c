@@ -48,11 +48,13 @@ void run() {
 
 void onCommand(uint8_t opcode, char *commandData) {
 
-	void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
-	movement direction;
+	if(opcode == 1) {
+		void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
+		movement direction;
 
-	unpackMovement((uint8_t)commandData[0], &direction);
-	MotorControl(&direction, *motorCallback);
+		unpackMovement((uint8_t)commandData[0], &direction);
+		MotorControl(&direction, *motorCallback);
+	}
 
 	// TODO: add engine ...
 }

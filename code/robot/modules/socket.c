@@ -6,7 +6,7 @@
 //
 
 void onCommand(uint8_t opcode, char *commandData);
-void send(uint8_t opcode, char *commandData);
+void writeToSocket(uint8_t opcode, char *commandData);
 void onDisconnect();
 void *listenForConnections(void *arg);
 void run();
@@ -81,15 +81,17 @@ void *listenForConnections(void *arg) {
 
 			// Remove the opcode from the client_message
 			int j;
-			for(j = 0; j < strlen(client_message); j++)
+			for(j = 0; j < (strlen(client_message) + 1); j++) {
 				if(j != 0)
 					client_message[j - 1] = client_message[j];
+			}
 			if(strlen(client_message) > 0)
 				client_message[j] = '\0';
 
-            printf("Opcode: %d\n", opcode);
+            //printf("Opcode: %d\n", opcode);
+            //printf("Message: %d\n", client_message[0]);
 
-            //onCommand(opcode, client_message);
+            onCommand(opcode, client_message);
 
             int i;
 			for (i = 0; i < read_size; i++) {
@@ -110,7 +112,7 @@ void *listenForConnections(void *arg) {
     }
 }
 
-void send(uint8_t opcode, char *commandData) {
+void writeToSocket(uint8_t opcode, char *commandData) {
 	char client_message[1025];
 
 	client_message[0] = opcode;
