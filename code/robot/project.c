@@ -19,8 +19,7 @@
 #include <pthread.h> // threads
 #include <wiringPi.h>
 #include <time.h>
-
-#include  "rpiGpio.h"
+#include  "rpiGpio.h" // remove when WiringPi fully included
 #include  <softPwm.h>
 
 #include "modules/socket.c"
@@ -42,19 +41,22 @@ void run() {
 	distanceInit();
 	speedInit();
 	compassInit();
-    /*while(1) {
-       printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
+	
+    while(1) {
+       //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
        sleep(1);
-    }*/
+    }
 }
 
-void onCommand(char *commandData) {
+void onCommand(uint8_t opcode, char *commandData) {
 
-	void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
-	movement direction;
+	if(opcode == 1) {
+		void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
+		movement direction;
 
-	unpackMovement((uint8_t)commandData[0], &direction);
-	MotorControl(&direction, *motorCallback);
+		unpackMovement((uint8_t)commandData[0], &direction);
+		MotorControl(&direction, *motorCallback);
+	}
 
 	// TODO: add engine ...
 }

@@ -5,7 +5,8 @@
 //  Copyright (c) 2015 Mats Otten. All rights reserved.
 //
 
-void onCommand(char *commandData);
+void onCommand(uint8_t opcode, char *commandData);
+void writeToSocket(uint8_t opcode, char *commandData);
 void onDisconnect();
 void *listenForConnections(void *arg);
 void run();
@@ -61,7 +62,7 @@ void *listenForConnections(void *arg) {
         int tmpUserSocket;
 
         tmpUserSocket = accept(socketConnection, (struct sockaddr *)&client, (socklen_t*)&c);
-        if (userSocket == -1)
+        if (tmpUserSocket == -1)
             printf("accept failed\n");
 
         if(userSocket >= 0) // if there is already a socket connected, disconnect
@@ -69,13 +70,29 @@ void *listenForConnections(void *arg) {
 
         userSocket = tmpUserSocket;
 
-        char * sendBuff = "Connection established.";
-        write(userSocket, sendBuff, strlen(sendBuff));
+        //char * sendBuff = "Connection established.";
+        //write(userSocket, sendBuff, strlen(sendBuff));
 
         printf("Client has connected!\n");
 
         while((read_size = recv(userSocket, client_message, 1024, 0)) > 0 ){
-            onCommand(client_message);
+        	write(userSocket, client_message, strlen(client_message));
+        	uint8_t opcode = client_message[0];
+
+			// Remove the opcode from the client_message
+			int j;
+			for(j = 0; j < (strlen(client_message) + 1); j++) {
+				if(j != 0)
+					client_message[j - 1] = client_message[j];
+			}
+			if(strlen(client_message) > 0)
+				client_message[j] = '\0';
+
+            //printf("Opcode: %d\n", opcode);
+            //printf("Message: %d\n", client_message[0]);
+
+            onCommand(opcode, client_message);
+
             int i;
 			for (i = 0; i < read_size; i++) {
 				client_message[i] = '\0';
@@ -87,10 +104,21 @@ void *listenForConnections(void *arg) {
             printf("Client disconnected\n");
         }
         else if(read_size == -1) {
-            close(userSocket);
+            userSocket = -1;
             printf("Client error\n");
         }
 
         onDisconnect();
     }
+}
+
+void writeToSocket(uint8_t opcode, char *commandData) {
+	char client_message[1025];
+
+	client_message[0] = opcode;
+	int i;
+	for(i = 0; (i < strlen(commandData) && i < 1024); i++)
+		client_message[i + 1] = commandData[i];
+
+	write(userSocket, client_message, 1025);
 }
