@@ -27,6 +27,7 @@
 #include "modules/motor.c"
 #include "modules/distance.c"
 #include "modules/speed.c"
+#include "modules/compass.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -40,7 +41,7 @@ void run() {
 	MotorInit();
 	distanceInit();
 	speedInit();
-	
+	compassInit();
     /*while(1) {
        printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
        sleep(1);
