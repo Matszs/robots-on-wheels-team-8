@@ -27,7 +27,7 @@
 			android:layout_height="match_parent"
 			android:inputType="textPersonName"
 			android:ems="10"
-			android:id="@+id/connection_add_ip"
+			android:id="@+id/connection_edit_ip"
 			android:layout_alignParentTop="true"
 			android:layout_toRightOf="@+id/textView"
 			android:layout_toEndOf="@+id/textView"/>
@@ -55,7 +55,7 @@
 			android:layout_height="match_parent"
 			android:inputType="textPersonName"
 			android:ems="10"
-			android:id="@+id/connection_add_port"
+			android:id="@+id/connection_edit_port"
 			android:layout_alignParentTop="true"
 			android:layout_toRightOf="@+id/textView2"
 			android:layout_toEndOf="@+id/textView2"/>
@@ -82,7 +82,7 @@
 			android:layout_height="match_parent"
 			android:inputType="textPersonName"
 			android:ems="10"
-			android:id="@+id/connection_add_name"
+			android:id="@+id/connection_edit_name"
 			android:layout_alignParentTop="true"
 			android:layout_toRightOf="@+id/textView3"
 			android:layout_toEndOf="@+id/textView3"/>
@@ -98,7 +98,7 @@
 			android:layout_width="70dp"
 			android:layout_height="wrap_content"
 			android:text="Save"
-			android:id="@+id/connection_add_button"
+			android:id="@+id/connection_edit_save_button"
 			style="@style/Widget.AppCompat.Button.Borderless.Colored"
 			/>
 
@@ -106,7 +106,14 @@
 			android:layout_width="80dp"
 			android:layout_height="wrap_content"
 			android:text="Cancel"
-			android:id="@+id/connection_add_cancel"
+			android:id="@+id/connection_edit_cancel"
+			style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
+
+		<Button
+			android:layout_width="80dp"
+			android:layout_height="wrap_content"
+			android:text="Delete"
+			android:id="@+id/connection_edit_delete"
 			style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
 	</LinearLayout>
 
