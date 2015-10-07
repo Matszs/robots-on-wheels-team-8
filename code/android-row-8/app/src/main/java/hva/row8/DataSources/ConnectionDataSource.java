@@ -58,6 +58,10 @@ public class ConnectionDataSource {
 		database.update("connections", values, "id=?", new String[]{String.valueOf(id)});
 	}
 
+	public void deleteConnection(int id) {
+		database.delete("connections", "id=?", new String[]{String.valueOf(id)});
+	}
+
 	public Connection getConnection(int id) {
 		Cursor connectionCursor = database.query("connections", new String[]{"id", "name", "ip", "port"}, "id = ?", new String[]{ String.valueOf(id) }, null, null, null);
 		if(connectionCursor.moveToFirst())

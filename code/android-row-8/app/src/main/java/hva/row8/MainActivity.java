@@ -1,5 +1,6 @@
 package hva.row8;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -38,7 +39,13 @@ public class MainActivity extends AppCompatActivity {
 		connectionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Toast.makeText(MainActivity.this, "KLIK: " + id, Toast.LENGTH_SHORT).show();
+				Connection connection = application.connectionDataSource.getConnection((int)id);
+
+				Intent connectionIntent = new Intent(MainActivity.this, ConnectionActivity.class);
+				connectionIntent.putExtra("connection_id", (int)id);
+				startActivity(connectionIntent);
+
+				Toast.makeText(MainActivity.this, "Connecting to " + connection.name, Toast.LENGTH_SHORT).show();
 			}
 		});
 		connectionsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

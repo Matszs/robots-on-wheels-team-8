@@ -94,6 +94,8 @@ public class ConnectionEditDialog extends Dialog {
 		remove.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				activity.application.connectionDataSource.deleteConnection(connection.id);
+				activity.renewConnectionList();
 				Toast.makeText(activity, "Succesfully deleted.", Toast.LENGTH_SHORT).show();
 				dismiss();
 			}

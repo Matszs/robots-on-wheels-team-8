@@ -1,0 +1,42 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 xmlns:tools="http://schemas.android.com/tools"
+			 android:layout_width="match_parent"
+			 android:layout_height="match_parent"
+			 android:background="#0099cc"
+			 tools:context="hva.row8.ConnectionActivity">
+
+	<TextView android:id="@+id/fullscreen_content"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:keepScreenOn="true"
+			  android:textColor="#33b5e5"
+			  android:textStyle="bold"
+			  android:textSize="50sp"
+			  android:gravity="center"
+			  android:text="@string/dummy_content"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Send message to socket server"
+		android:id="@+id/test_socket"
+		android:layout_gravity="center_horizontal|bottom"/>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_gravity="left|top"
+		android:layout_margin="20dp">
+
+		<ImageView
+			android:layout_width="100dp"
+			android:layout_height="100dp"
+			android:id="@+id/compass"
+			android:layout_alignParentTop="true"
+			android:clickable="false"
+			android:background="@mipmap/compass" />
+
+	</RelativeLayout>
+
+
+</FrameLayout>
