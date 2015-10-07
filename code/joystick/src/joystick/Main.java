@@ -1,3 +1,10 @@
+//
+//  Main.java
+//
+//  Created by Suzanne Peerderman on 14-09-15.
+//  Copyright (c) 2015 Suzanne Peerderman. All rights reserved.
+//
+
 package joystick;
 
 import javafx.application.Application;
@@ -13,6 +20,7 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.EllipseBuilder;
 import javafx.stage.Stage;
 import joystick.classes.*;
+import joystick.listeners.DataReceiveListener;
 
 public class Main extends Application {
 
@@ -20,6 +28,18 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 		final SocketClient sc = new SocketClient();
 		sc.setUp();
+
+		sc.addListener(new DataReceiveListener() {
+			@Override
+			public void onDataReceive(int module, byte[] data) {
+				try {
+					System.out.println("Module: " + module);
+					System.out.println("Data: " + new String(data, "UTF-8"));
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 		Pane pane = new Pane();
 
@@ -68,7 +88,7 @@ public class Main extends Application {
 
 				int value = Calculation.calculateValue(event.getX(), event.getY());
 				try {
-					sc.write(value);
+					sc.write(1, new byte[] { (byte)value });
 					System.out.println(value);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -84,7 +104,7 @@ public class Main extends Application {
 				joystick.setCenterY(y);
 
 				try {
-					sc.write(0);
+					sc.write(1, new byte[] { 0 });
 					System.out.println("STOP");
 				} catch (Exception e) {
 					e.printStackTrace();

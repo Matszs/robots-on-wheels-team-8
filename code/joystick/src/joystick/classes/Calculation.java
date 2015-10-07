@@ -1,12 +1,12 @@
+//
+//  Calculation.java
+//
+//  Created by Suzanne Peerderman & Mats Otten on 26-09-15.
+//  Copyright (c) 2015 Suzanne Peerderman & Mats Otten. All rights reserved.
+//
+
 package joystick.classes;
 
-/**
- * Place program description here
- *
- * @author Mats Otten
- * @project joystick
- * @since 26-09-15
- */
 public class Calculation {
 
 	public static int startX = 150;
