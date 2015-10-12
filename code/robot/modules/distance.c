@@ -33,7 +33,7 @@ void *distancePerformRead(void *arg) {
 
     while(1) {
        wiringPiI2CWriteReg8(distanceSetup, 0, 81);
-       sleep(0.25);
+       usleep(250000);
        distanceValue = wiringPiI2CReadReg8(distanceSetup, 3);
      }
 }
