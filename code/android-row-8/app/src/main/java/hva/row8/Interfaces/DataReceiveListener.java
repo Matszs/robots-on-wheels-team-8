@@ -5,4 +5,6 @@ package hva.row8.Interfaces;
  */
 public interface DataReceiveListener {
 	void onDataReceive(int module, byte[] data);
+	void onConnectionDrop();
+	//void onConnectionDrop(boolean onStart);
 }

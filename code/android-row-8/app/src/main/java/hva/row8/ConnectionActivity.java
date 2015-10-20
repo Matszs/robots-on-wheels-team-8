@@ -2,6 +2,7 @@ package hva.row8;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,10 +15,15 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import hva.row8.Classes.Calculation;
 import hva.row8.Classes.Connection;
 import hva.row8.Interfaces.DataReceiveListener;
+import hva.row8.Interfaces.MoveListener;
+import hva.row8.Modules.Joystick;
 import hva.row8.Modules.SocketClient;
 
 /**
@@ -28,7 +34,13 @@ public class ConnectionActivity extends AppCompatActivity {
 	private View mContentView;
 	public Application application;
 	private Connection connection;
+	private float lastCompassRotation = 0;
 	SocketClient socketConnection;
+
+	private int xHolder;
+	private int yHolder;
+
+	private Joystick joystick;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +61,29 @@ public class ConnectionActivity extends AppCompatActivity {
 		mContentView = findViewById(R.id.fullscreen_content);
 
 		makeDisplayFullscreen();
+		joyStickInit();
 
-		//new Thread(new ClientThread()).start();
+		new Thread(new ClientThread()).start();
+	}
 
-		Button socketTestButton = (Button)findViewById(R.id.test_socket);
-		socketTestButton.setOnClickListener(new View.OnClickListener() {
+	protected void joyStickInit() {
+		final RelativeLayout joystickContainer = (RelativeLayout)findViewById(R.id.joystick_container);
+		final RelativeLayout joystickAnalog = (RelativeLayout)findViewById(R.id.joystick_analog);
+
+		joystick = new Joystick(ConnectionActivity.this, joystickContainer, joystickAnalog);
+		joystick.bind();
+		joystick.addListener(new MoveListener() {
 			@Override
-			public void onClick(View v) {
-				try {
-					socketConnection.write(1, new byte[]{ 0 });
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
+			public void onMove(int x, int y) {
+
+				int value = Calculation.calculateValue(x, y);
+
+
+				//System.out.println("X: " + x + " | Y: " + y);
+				//System.out.println("V: " + value);
+
 			}
 		});
-
-		compassModule();
 	}
 
 	@Override
@@ -92,27 +111,39 @@ public class ConnectionActivity extends AppCompatActivity {
 				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 	}
 
-	private void compassModule() {
-		float currentDegree = 0f;
-		ImageView compass = (ImageView)findViewById(R.id.compass);
+	private void compassModule(final int degrees) {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
 
-		float degree = Math.round(180);
-		RotateAnimation turn = new RotateAnimation(
-				currentDegree,
-				-degree,
-				Animation.RELATIVE_TO_SELF, 0.5f,
-				Animation.RELATIVE_TO_SELF,
-				0.5f);
+				float currentDegree = 0f;
+				ImageView compass = (ImageView) findViewById(R.id.compass);
 
-		// how long the animation will take place
-		turn.setDuration(210);
+				float degree = Math.round(degrees);
+				RotateAnimation turn = new RotateAnimation(lastCompassRotation, degree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 
-		// set the animation after the end of the reservation status
-		turn.setFillAfter(true);
+				// how long the animation will take place
+				turn.setDuration(210);
 
-		// Start the animation
-		compass.startAnimation(turn);
-		currentDegree = -degree;
+				// set the animation after the end of the reservation status
+				turn.setFillAfter(true);
+
+				// Start the animation
+				compass.startAnimation(turn);
+
+				lastCompassRotation = degrees;
+			}
+		});
+	}
+
+	private void speedModule(final int speed) {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+				TextView speedText = (TextView)findViewById(R.id.speed_field);
+				speedText.setText(String.valueOf(speed));
+			}
+		});
 	}
 
 	class ClientThread implements Runnable {
@@ -120,18 +151,45 @@ public class ConnectionActivity extends AppCompatActivity {
 		@Override
 		public void run() {
 			socketConnection = new SocketClient(connection.ip, Integer.parseInt(connection.port));
-			socketConnection.setUp();
 			socketConnection.addListener(new DataReceiveListener() {
 				@Override
 				public void onDataReceive(int module, byte[] data) {
 					try {
-						System.out.println("Module: " + module);
-						System.out.println("Data: " + new String(data, "UTF-8"));
+						//System.out.println("Module: " + module);
+						//System.out.println("Data: " + new String(data, "UTF-8"));
+
+
+						switch (module) {
+
+							case 6:
+								compassModule(data[0]);
+								break;
+							case 3:
+								speedModule(data[0]);
+								break;
+
+						}
+
+
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
+
+				@Override
+				public void onConnectionDrop() {
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(ConnectionActivity.this, "Couldn't connect to server.", Toast.LENGTH_SHORT).show();
+						}
+					});
+
+					ConnectionActivity.this.finish();
+				}
 			});
+
+					socketConnection.setUp();
+				}
+			}
 		}
-	}
-}

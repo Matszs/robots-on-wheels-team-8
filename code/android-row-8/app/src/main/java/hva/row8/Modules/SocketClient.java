@@ -47,9 +47,13 @@ public class SocketClient {
 						while((length = is.read(buffer)) > 0) {
 
 							for(DataReceiveListener dataReceiveListener : listeners)
-								dataReceiveListener.onDataReceive(buffer[0], Arrays.copyOfRange(buffer, 0, length));
+								dataReceiveListener.onDataReceive(buffer[0], Arrays.copyOfRange(buffer, 1, length));
 
 							buffer = new byte[1025];
+						}
+						if(length == -1) {
+							for(DataReceiveListener dataReceiveListener : listeners)
+								dataReceiveListener.onConnectionDrop();
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
@@ -59,6 +63,9 @@ public class SocketClient {
 
 			readThread.start();
 		}catch(IOException e) {
+			for(DataReceiveListener dataReceiveListener : listeners)
+				dataReceiveListener.onConnectionDrop();
+
 			e.printStackTrace();
 		}
 	}
