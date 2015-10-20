@@ -53,8 +53,8 @@ void run() {
 	MotorInit();
 	distanceInit();
 	speedInit();
-//	compassInit();
-//	servoInit();
+	compassInit();
+	servoInit();
 
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
@@ -65,7 +65,7 @@ void run() {
 		writeToSocket(OPT_SPEED,  &speed);
 		char compass = (char) compassRead();
 		writeToSocket(OPT_COMPASS,  &compass);
-		sleep(1);
+		usleep(100000);
     }
 }
 
