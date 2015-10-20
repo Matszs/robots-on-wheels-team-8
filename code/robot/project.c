@@ -39,6 +39,7 @@
 #include "modules/distance.c"
 #include "modules/speed.c"
 #include "modules/compass.c"
+#include "modules/servo.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -53,12 +54,14 @@ void run() {
 	distanceInit();
 	speedInit();
 	compassInit();
+	servoInit();
 
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
 		char speed = (char) speedRead();
-		printf("%d", speed);
-
+		if(DEBUG) {
+			printf("Speed: %d m/s\n", speed);
+		}
 		writeToSocket(OPT_SPEED,  &speed);
 		char compass = (char) compassRead();
 		writeToSocket(OPT_COMPASS,  &compass);

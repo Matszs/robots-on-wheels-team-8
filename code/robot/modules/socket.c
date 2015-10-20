@@ -85,12 +85,14 @@ void *listenForConnections(void *arg) {
 				if(j != 0)
 					client_message[j - 1] = client_message[j];
 			}
-			if(strlen(client_message) > 0)
+			if(strlen(client_message) > 0){
 				client_message[j] = '\0';
+			}
 
-            //printf("Opcode: %d\n", opcode);
-            //printf("Message: %d\n", client_message[0]);
-
+			if(DEBUG) {
+				printf("Opcode: %d\n", opcode);
+				printf("Message: %d\n", client_message[0]);
+			}
             onCommand(opcode, client_message);
 
             int i;
