@@ -51,7 +51,7 @@ int main() {
 void run() {
 	socketInit();
 	MotorInit();
-//	distanceInit();
+	distanceInit();
 //	speedInit();
 //	compassInit();
 //	servoInit();
