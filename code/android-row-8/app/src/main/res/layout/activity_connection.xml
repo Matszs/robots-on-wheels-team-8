@@ -1,0 +1,91 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 xmlns:tools="http://schemas.android.com/tools"
+			 android:layout_width="match_parent"
+			 android:layout_height="match_parent"
+			 android:background="#0099cc"
+			 tools:context="hva.row8.ConnectionActivity">
+
+	<TextView android:id="@+id/fullscreen_content"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:keepScreenOn="true"
+			  android:textColor="#33b5e5"
+			  android:textStyle="bold"
+			  android:textSize="50sp"
+			  android:gravity="center"
+			  android:text="@string/dummy_content"/>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_gravity="left|top">
+
+		<ImageView
+			android:layout_width="100dp"
+			android:layout_height="100dp"
+			android:id="@+id/compass"
+			android:layout_margin="20dp"
+			android:layout_alignParentTop="true"
+			android:clickable="false"
+			android:background="@mipmap/compass" />
+
+		<RelativeLayout
+			android:layout_width="150dp"
+			android:layout_height="150dp"
+			android:layout_margin="20dp"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:background="@drawable/joystick"
+			android:id="@+id/joystick_container"
+			android:touchscreenBlocksFocus="false">
+
+			<RelativeLayout
+				android:layout_width="34dp"
+				android:layout_height="34dp"
+				android:background="@drawable/joystick_analog"
+				android:id="@+id/joystick_analog"
+				android:layout_marginTop="58dp"
+				android:layout_marginLeft="58dp">
+			</RelativeLayout>
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:id="@+id/connection_top_bar"
+			android:background="@drawable/connection_right_top_bar"
+			android:alpha="0.5"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			android:padding="10dp">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:text="100"
+				android:id="@+id/speed_field"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"
+				android:textSize="30dp"/>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="m/s"
+				android:id="@+id/textView5"
+				android:layout_alignParentTop="true"
+				android:layout_toRightOf="@+id/speed_field"
+				android:layout_toEndOf="@+id/speed_field"
+				android:layout_marginTop="3dp"
+				android:layout_marginLeft="10dp"/>
+		</RelativeLayout>
+
+	</RelativeLayout>
+
+
+</FrameLayout>

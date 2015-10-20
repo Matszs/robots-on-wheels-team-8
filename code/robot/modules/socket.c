@@ -76,7 +76,7 @@ void *listenForConnections(void *arg) {
         printf("Client has connected!\n");
 
         while((read_size = recv(userSocket, client_message, 1024, 0)) > 0 ){
-        	write(userSocket, client_message, strlen(client_message));
+        	//write(userSocket, client_message, strlen(client_message));
         	uint8_t opcode = client_message[0];
 
 			// Remove the opcode from the client_message
@@ -113,12 +113,14 @@ void *listenForConnections(void *arg) {
 }
 
 void writeToSocket(uint8_t opcode, char *commandData) {
-	char client_message[1025];
+    if(userSocket > 0) {
+        char client_message[1025];
 
-	client_message[0] = opcode;
-	int i;
-	for(i = 0; (i < strlen(commandData) && i < 1024); i++)
-		client_message[i + 1] = commandData[i];
+        client_message[0] = opcode;
+        int i;
+        for(i = 0; (i < strlen(commandData) && i < 1024); i++)
+            client_message[i + 1] = commandData[i];
 
-	write(userSocket, client_message, 1025);
+        write(userSocket, client_message, 1025);
+	}
 }

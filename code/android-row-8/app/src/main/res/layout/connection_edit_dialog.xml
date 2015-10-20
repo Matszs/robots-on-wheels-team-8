@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:orientation="vertical"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:padding="20dp">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="IP:"
+			android:id="@+id/textView"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:layout_marginTop="20dp"
+			android:layout_marginRight="36dp"/>
+
+		<EditText
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:inputType="textPersonName"
+			android:ems="10"
+			android:id="@+id/connection_edit_ip"
+			android:layout_alignParentTop="true"
+			android:layout_toRightOf="@+id/textView"
+			android:layout_toEndOf="@+id/textView"/>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="Port:"
+			android:id="@+id/textView2"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:layout_marginTop="20dp"
+			android:layout_marginRight="20dp"/>
+
+		<EditText
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:inputType="textPersonName"
+			android:ems="10"
+			android:id="@+id/connection_edit_port"
+			android:layout_alignParentTop="true"
+			android:layout_toRightOf="@+id/textView2"
+			android:layout_toEndOf="@+id/textView2"/>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="Name:"
+			android:id="@+id/textView3"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:layout_marginTop="20dp"
+			android:layout_marginRight="5dp"/>
+
+		<EditText
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:inputType="textPersonName"
+			android:ems="10"
+			android:id="@+id/connection_edit_name"
+			android:layout_alignParentTop="true"
+			android:layout_toRightOf="@+id/textView3"
+			android:layout_toEndOf="@+id/textView3"/>
+	</RelativeLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="20dp">
+
+		<Button
+			android:layout_width="70dp"
+			android:layout_height="wrap_content"
+			android:text="Save"
+			android:id="@+id/connection_edit_save_button"
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			/>
+
+		<Button
+			android:layout_width="80dp"
+			android:layout_height="wrap_content"
+			android:text="Cancel"
+			android:id="@+id/connection_edit_cancel"
+			style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
+
+		<Button
+			android:layout_width="80dp"
+			android:layout_height="wrap_content"
+			android:text="Delete"
+			android:id="@+id/connection_edit_delete"
+			style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
+	</LinearLayout>
+
+</LinearLayout>
