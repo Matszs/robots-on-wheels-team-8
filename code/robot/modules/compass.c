@@ -49,7 +49,7 @@ void *compassPerformRead(){
 		
 		
 		float angle = (atan2(y, x)) * 180 / M_PI;
-		printf("angle before = %0.1f ", angle);
+//		printf("angle before = %0.1f ", angle);
 		
 		if (angle < 0) {
 			angle += 360;
