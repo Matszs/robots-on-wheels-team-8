@@ -55,7 +55,7 @@ void *compassPerformRead(){
 			angle += 360;
 		}
 		angelCompass = angle;
-		usleep(500000);
+		sleep(1);
 		
 	}
 }

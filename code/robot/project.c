@@ -53,7 +53,7 @@ void run() {
 	MotorInit();
 	distanceInit();
 	speedInit();
-//	compassInit();
+	compassInit();
 	servoInit();
 
     while(1) {
