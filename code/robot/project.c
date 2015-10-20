@@ -12,8 +12,8 @@
 
 
 
-#define PORT_NUMBER	1212
-#define DEBUG	1
+#define PORT_NUMBER		1212
+#define DEBUG			0
 
 #define OPT_DEFAULT		0
 #define OPT_MOTOR		1
@@ -59,12 +59,11 @@ void run() {
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
 		char speed = (char) speedRead();
-		if(DEBUG) {
-			printf("Speed: %d m/s\n", speed);
-		}
 		writeToSocket(OPT_SPEED,  &speed);
 		char compass = (char) compassRead();
 		writeToSocket(OPT_COMPASS,  &compass);
+		char distance = (char) distanceRead();
+		writeToSocket(OPT_DISTANCE,  &distance);
 		usleep(100000);
     }
 }
