@@ -115,15 +115,12 @@ void *listenForConnections(void *arg) {
 }
 
 void writeToSocket(uint8_t opcode, char *commandData) {
-	if(DEBUG) {
-		printf("Write to socket %d", opcode);
-	}
     if(userSocket > 0) {
         char client_message[1025];
 
         client_message[0] = opcode;
 		if(DEBUG) {
-			printf("Write to socket: ");
+			printf("Write to socket len %d: ", strlen(commandData));
 		}
         int i;
 		for(i = 0; (i < strlen(commandData) && i < 1024); i++){
