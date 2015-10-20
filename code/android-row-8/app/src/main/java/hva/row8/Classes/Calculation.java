@@ -85,10 +85,13 @@ public class Calculation {
 		int degrees = calculateDegrees(x, y);
 		int distance = calculateDistance(x, y);
 
+		if(distance == 0)
+			return 0;
+
 		int speed = distanceToSpeed(distance);
 		int direction = degreesToDirection(degrees);
 
-		System.out.println("CS: " + speed);
+		//System.out.println("CS: " + speed);
 		int engineValue = calculateEngineValue(direction, degrees, speed);
 
 		return engineValue;
@@ -118,7 +121,6 @@ public class Calculation {
 	}
 
 	protected  static int distanceToSpeed(int distance) {
-		System.out.println("D: " + distance);
 		/*System.out.println("R: " + radius);
 		int speed = 0;
 
