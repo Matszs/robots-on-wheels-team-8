@@ -13,7 +13,7 @@
 #include  <math.h>
 
 int ticks = 0;
-double speed = 0;
+int speed = 0;
 void interrupt (void) { ticks++; }
 void *measureSpeed();
 
@@ -36,6 +36,6 @@ void *measureSpeed (){
 	}
 }
 
-double speedRead(){
+int speedRead(){
 	return speed;
 }

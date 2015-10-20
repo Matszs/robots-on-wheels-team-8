@@ -7,9 +7,21 @@
 
 // sudo gcc -o project project.c -L/usr/local/lib  -lwiringPi -lwiringPiDev -lpthread -lm -lrpigpio
 //
+// speed opt code = 3
+// compas opt code = 6
+
+
 
 #define PORT_NUMBER	1212
 #define DEBUG	0
+
+#define OPT_DEFAULT		0
+#define OPT_MOTOR		1
+#define OPT_DISTANCE	2
+#define OPT_SPEED		3
+#define OPT_CAMERA		4
+#define OPT_SERVO		5
+#define OPT_COMPASS		6
 
 #include <stdio.h>
 #include <string.h> //strlen
@@ -19,7 +31,7 @@
 #include <pthread.h> // threads
 #include <wiringPi.h>
 #include <time.h>
-#include  "rpiGpio.h" // remove when WiringPi fully included
+//#include  "rpiGpio.h" // remove when WiringPi fully included
 #include  <softPwm.h>
 
 #include "modules/socket.c"
@@ -44,7 +56,11 @@ void run() {
 
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
-       sleep(1);
+		char speed = (char) speedRead();
+		writeToSocket(OPT_SPEED,  &speed);
+		char compass = (char) compassRead();
+		writeToSocket(OPT_COMPASS,  &compass);
+		sleep(1);
     }
 }
 

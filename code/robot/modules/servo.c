@@ -29,6 +29,6 @@ void *setServo (){
 
 	while (1) {
 //		softPwmWrite(1,19);
-		usleep(1000);
+		usleep(100000);
 	}
 }
