@@ -59,8 +59,9 @@ void run() {
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
 		char speed = (char) speedRead();
-		printf("%d", speed);
-
+		if(DEBUG) {
+			printf("Speed: %d m/s\n", speed);
+		}
 		writeToSocket(OPT_SPEED,  &speed);
 		char compass = (char) compassRead();
 		writeToSocket(OPT_COMPASS,  &compass);
