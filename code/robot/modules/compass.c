@@ -14,6 +14,8 @@
 
 int angelCompass;
 int fd;
+void *compassPerformRead();
+
 
 void compassInit(){
 	fd = wiringPiI2CSetup(0x1e);
@@ -29,7 +31,7 @@ uint8_t compassRead() {
 	return angelCompass;
 }
 
-void compassPerformRead(){
+void *compassPerformRead(){
 	
 	while(1){
 		wiringPiI2CWriteReg8(fd, 0x02, 0x01); //idle mode
