@@ -123,12 +123,17 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 			printf("Write to socket len %d: ", strlen(commandData));
 		}
         int i;
-		for(i = 0; (i < strlen(commandData) && i < 1024); i++){
+		for(i = 0; i < 1024; i++){
 			if(DEBUG) {
 				printf("%d", client_message[i]);
 			}
 
-			client_message[i + 1] = commandData[i];
+			if (i < strlen(commandData)) {
+				client_message[i + 1] = commandData[i];
+			}
+			else{
+				client_message[i + 1] = '\0';
+			}
 		}
 		if(DEBUG) {
 			printf("\n");
