@@ -77,7 +77,12 @@ public class ConnectionActivity extends AppCompatActivity {
 			public void onMove(int x, int y) {
 
 				int value = Calculation.calculateValue(x, y);
+				try {
+					socketConnection.write(1, new byte[]{(byte) value});
+					System.out.println("Value: " + value);
+				} catch (Exception e) {
 
+				}
 
 				//System.out.println("X: " + x + " | Y: " + y);
 				//System.out.println("V: " + value);

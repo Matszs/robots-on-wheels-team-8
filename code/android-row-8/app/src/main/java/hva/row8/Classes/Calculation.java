@@ -142,7 +142,7 @@ public class Calculation {
 		if(speed > 6)
 			speed = 6;
 
-		System.out.println("S: " + speed);
+		//System.out.println("S: " + speed);
 
 		return speed;
 	}
