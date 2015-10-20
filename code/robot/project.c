@@ -13,7 +13,7 @@
 
 
 #define PORT_NUMBER	1212
-#define DEBUG	0
+#define DEBUG	1
 
 #define OPT_DEFAULT		0
 #define OPT_MOTOR		1
@@ -65,7 +65,7 @@ void run() {
 		writeToSocket(OPT_SPEED,  &speed);
 		char compass = (char) compassRead();
 		writeToSocket(OPT_COMPASS,  &compass);
-		sleep(1);
+		usleep(100000);
     }
 }
 

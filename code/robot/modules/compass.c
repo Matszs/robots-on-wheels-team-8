@@ -13,15 +13,15 @@
 #include  <wiringPi.h>
 
 int angelCompass;
-int fd;
+int compass;
 void *compassPerformRead();
 
 
 void compassInit(){
-	fd = wiringPiI2CSetup(0x1e);
-	wiringPiI2CWriteReg8(fd, 0x00, 0x70);
-	wiringPiI2CWriteReg8(fd, 0x01, 0xA0);
-	wiringPiI2CWriteReg8(fd, 0x02, 0x01);
+	compass = wiringPiI2CSetup(0x1e);
+	wiringPiI2CWriteReg8(compass, 0x00, 0x70);
+	wiringPiI2CWriteReg8(compass, 0x01, 0xA0);
+	wiringPiI2CWriteReg8(compass, 0x02, 0x01);
 	pthread_t compassThread;
 	pthread_create(&compassThread, NULL, compassPerformRead, NULL);
 
@@ -34,14 +34,14 @@ uint8_t compassRead() {
 void *compassPerformRead(){
 	
 	while(1){
-		wiringPiI2CWriteReg8(fd, 0x02, 0x01); //idle mode
+		wiringPiI2CWriteReg8(compass, 0x02, 0x01); //idle mode
 		usleep(100000);
-		int xh = wiringPiI2CReadReg8(fd, 0x03);
-		int xl = wiringPiI2CReadReg8(fd, 0x04);
-		int yh = wiringPiI2CReadReg8(fd, 0x07);
-		int yl = wiringPiI2CReadReg8(fd, 0x08);
-		int zh = wiringPiI2CReadReg8(fd, 0x05);
-		int zl = wiringPiI2CReadReg8(fd, 0x06);
+		int xh = wiringPiI2CReadReg8(compass, 0x03);
+		int xl = wiringPiI2CReadReg8(compass, 0x04);
+		int yh = wiringPiI2CReadReg8(compass, 0x07);
+		int yl = wiringPiI2CReadReg8(compass, 0x08);
+		int zh = wiringPiI2CReadReg8(compass, 0x05);
+		int zl = wiringPiI2CReadReg8(compass, 0x06);
 		
 		short x = (xh << 8) | xl;
 		short y = (yh << 8) | yl;
@@ -55,7 +55,7 @@ void *compassPerformRead(){
 			angle += 360;
 		}
 		angelCompass = angle;
-		usleep(500000);
+		sleep(1);
 		
 	}
 }

@@ -119,9 +119,26 @@ void writeToSocket(uint8_t opcode, char *commandData) {
         char client_message[1025];
 
         client_message[0] = opcode;
+		if(DEBUG) {
+			printf("Write to socket len %d: ", strlen(commandData));
+		}
         int i;
-        for(i = 0; (i < strlen(commandData) && i < 1024); i++)
-            client_message[i + 1] = commandData[i];
+		for(i = 0; i < 1024; i++){
+			if(DEBUG) {
+				printf("%d", client_message[i]);
+			}
+
+			if (i < strlen(commandData)) {
+				client_message[i + 1] = commandData[i];
+			}
+			else{
+				client_message[i + 1] = '\0';
+			}
+		}
+		if(DEBUG) {
+			printf("\n");
+		}
+		
 
         write(userSocket, client_message, 1025);
 	}
