@@ -19,9 +19,9 @@ void *compassPerformRead();
 
 void compassInit(){
 	compass = wiringPiI2CSetup(0x1e);
-	wiringPiI2CWriteReg8(fd, 0x00, 0x70);
-	wiringPiI2CWriteReg8(fd, 0x01, 0xA0);
-	wiringPiI2CWriteReg8(fd, 0x02, 0x01);
+	wiringPiI2CWriteReg8(compass, 0x00, 0x70);
+	wiringPiI2CWriteReg8(compass, 0x01, 0xA0);
+	wiringPiI2CWriteReg8(compass, 0x02, 0x01);
 	pthread_t compassThread;
 	pthread_create(&compassThread, NULL, compassPerformRead, NULL);
 
