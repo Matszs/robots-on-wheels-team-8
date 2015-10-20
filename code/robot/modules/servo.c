@@ -15,17 +15,17 @@
 void *setServo();
 
 void servoInit() {
+	pthread_t servoThread;
+	pthread_create(&servoThread, NULL, setServo, NULL);
+}
+
+void *setServo (){
 	wiringPiSetup();
 	pinMode(1,OUTPUT);
 	digitalWrite(1,LOW);
 	pwmSetClock(500);  //add  explanation
 	softPwmCreate(1,0,500); //add explanation
 	
-	pthread_t servoThread;
-	pthread_create(&servoThread, NULL, setServo, NULL);
-}
-
-void *setServo (){
 	softPwmWrite(1,19);
 
 	while (1) {
