@@ -57,6 +57,8 @@ void run() {
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
 		char speed = (char) speedRead();
+		printf("%d", speed);
+
 		writeToSocket(OPT_SPEED,  &speed);
 		char compass = (char) compassRead();
 		writeToSocket(OPT_COMPASS,  &compass);
@@ -65,6 +67,7 @@ void run() {
 }
 
 void onCommand(uint8_t opcode, char *commandData) {
+	printf("%d", opcode);
 
 	if(opcode == 1) {
 		void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
