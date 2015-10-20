@@ -13,7 +13,7 @@
 
 
 #define PORT_NUMBER	1212
-#define DEBUG	0
+#define DEBUG	1
 
 #define OPT_DEFAULT		0
 #define OPT_MOTOR		1
@@ -52,7 +52,7 @@ void run() {
 	socketInit();
 	MotorInit();
 	distanceInit();
-//	speedInit();
+	speedInit();
 //	compassInit();
 //	servoInit();
 
