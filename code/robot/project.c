@@ -51,10 +51,10 @@ int main() {
 void run() {
 	socketInit();
 	MotorInit();
-	distanceInit();
-	speedInit();
-	compassInit();
-	servoInit();
+//	distanceInit();
+//	speedInit();
+//	compassInit();
+//	servoInit();
 
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
