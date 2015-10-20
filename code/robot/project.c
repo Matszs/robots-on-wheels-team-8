@@ -39,6 +39,7 @@
 #include "modules/distance.c"
 #include "modules/speed.c"
 #include "modules/compass.c"
+#include "modules/servo.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -53,6 +54,7 @@ void run() {
 	distanceInit();
 	speedInit();
 	compassInit();
+	servoInit();
 
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
