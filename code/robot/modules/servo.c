@@ -10,6 +10,7 @@
 #include  <unistd.h>
 #include  <wiringPi.h>
 #include  <softPwm.h>
+#include  <time.h>
 
 void *setServo();
 
@@ -18,7 +19,7 @@ void servoInit() {
 	pinMode(1,OUTPUT);
 	digitalWrite(1,LOW);
 	pwmSetClock(500);  //add  explanation
-	softPwmCreate(1,0,250); //add explanation
+	softPwmCreate(1,0,500); //add explanation
 	
 	pthread_t servoThread;
 	pthread_create(&servoThread, NULL, setServo, NULL);
@@ -29,6 +30,6 @@ void *setServo (){
 
 	while (1) {
 //		softPwmWrite(1,19);
-		usleep(100000);
+		sleep(10);
 	}
 }
