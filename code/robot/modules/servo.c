@@ -23,8 +23,8 @@ void *setServo (){
 	wiringPiSetup();
 	pinMode(1,OUTPUT);
 	digitalWrite(1,LOW);
-	pwmSetClock(500);  //add  explanation
-	softPwmCreate(1,0,500); //add explanation
+	pwmSetClock(100);  //add  explanation
+	softPwmCreate(1,0,100); //add explanation
 	
 	softPwmWrite(1,19);
 

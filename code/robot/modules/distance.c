@@ -13,7 +13,7 @@
 #include  <time.h>
 
 void *distancePerformRead(void *arg);
-uint8_t distanceValue = 50;
+int distanceValue = 50;
 int distanceSetup;
 
 void distanceInit() {
@@ -23,7 +23,7 @@ void distanceInit() {
 	pthread_create(&distanceThread, NULL, distancePerformRead, NULL);
 }
 
-uint8_t distanceRead() {
+int distanceRead() {
 	return distanceValue;
 }
 
