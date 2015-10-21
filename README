@@ -1,0 +1,12 @@
+Start application (in background):
+
+start &
+
+Running camera:
+
+raspivid -o - -t 99999 -w 640 -h 360 -fps 20|cvlc stream:///0 tdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
+
+stop application from background:
+
+fg
+ctrl + c
