@@ -5,15 +5,18 @@
 			 android:background="#0099cc"
 			 tools:context="hva.row8.ConnectionActivity">
 
-	<TextView android:id="@+id/fullscreen_content"
-			  android:layout_width="match_parent"
-			  android:layout_height="match_parent"
-			  android:keepScreenOn="true"
-			  android:textColor="#33b5e5"
-			  android:textStyle="bold"
-			  android:textSize="50sp"
-			  android:gravity="center"
-			  android:text="@string/dummy_content"/>
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<VideoView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:id="@+id/video_view"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"/>
+	</RelativeLayout>
 
 	<RelativeLayout
 		android:layout_width="match_parent"
@@ -83,6 +86,15 @@
 				android:layout_toEndOf="@+id/speed_field"
 				android:layout_marginTop="3dp"
 				android:layout_marginLeft="10dp"/>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="veel"
+				android:id="@+id/distance_field"
+				android:layout_below="@+id/speed_field"
+				android:layout_centerHorizontal="true"/>
 		</RelativeLayout>
 
 	</RelativeLayout>

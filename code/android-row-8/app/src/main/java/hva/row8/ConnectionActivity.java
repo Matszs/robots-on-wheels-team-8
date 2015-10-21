@@ -2,6 +2,7 @@ package hva.row8;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +16,13 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
+
+import java.io.UnsupportedEncodingException;
 
 import hva.row8.Classes.Calculation;
 import hva.row8.Classes.Connection;
@@ -36,6 +41,7 @@ public class ConnectionActivity extends AppCompatActivity {
 	private Connection connection;
 	private float lastCompassRotation = 0;
 	SocketClient socketConnection;
+	MediaController mediaController;
 
 	private int xHolder;
 	private int yHolder;
@@ -58,12 +64,28 @@ public class ConnectionActivity extends AppCompatActivity {
 		}
 
 		connection = application.connectionDataSource.getConnection(connectionId);
-		mContentView = findViewById(R.id.fullscreen_content);
+		mContentView = findViewById(R.id.video_view);
+
+		VideoView videoView = (VideoView)findViewById(R.id.video_view);
+
+		Uri UriSrc = Uri.parse("http://" + connection.ip + ":8090");
+
+		videoView.setVideoURI(UriSrc);
+		mediaController = new MediaController(ConnectionActivity.this);
+		videoView.setMediaController(mediaController);
+		videoView.start();
 
 		makeDisplayFullscreen();
 		joyStickInit();
 
 		new Thread(new ClientThread()).start();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		VideoView videoView = (VideoView)findViewById(R.id.video_view);
+		videoView.stopPlayback();
 	}
 
 	protected void joyStickInit() {
@@ -116,7 +138,7 @@ public class ConnectionActivity extends AppCompatActivity {
 				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 	}
 
-	private void compassModule(final int degrees) {
+	private void compassModule(final byte[] degreesData) {
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
 			@Override
 			public void run() {
@@ -124,7 +146,16 @@ public class ConnectionActivity extends AppCompatActivity {
 				float currentDegree = 0f;
 				ImageView compass = (ImageView) findViewById(R.id.compass);
 
-				float degree = Math.round(degrees);
+				float degree = 0;
+				try {
+					int i;
+					for (i = 0; i < degreesData.length && degreesData[i] != 0; i++);
+
+					String degreeString = new String(degreesData, 0, i, "us-ascii");
+					degree = Math.round(Integer.parseInt(degreeString));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 				RotateAnimation turn = new RotateAnimation(lastCompassRotation, degree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 
 				// how long the animation will take place
@@ -136,17 +167,37 @@ public class ConnectionActivity extends AppCompatActivity {
 				// Start the animation
 				compass.startAnimation(turn);
 
-				lastCompassRotation = degrees;
+				lastCompassRotation = degree;
 			}
 		});
 	}
 
-	private void speedModule(final int speed) {
+	private void speedModule(final byte[] speed) {
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
 			@Override
 			public void run() {
 				TextView speedText = (TextView)findViewById(R.id.speed_field);
-				speedText.setText(String.valueOf(speed));
+				try {
+					speedText.setText(new String(speed, "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void distanceModule(final byte[] distance) {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+
+
+				TextView distanceText = (TextView)findViewById(R.id.distance_field);
+				try {
+					distanceText.setText(new String(distance, "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
@@ -167,10 +218,13 @@ public class ConnectionActivity extends AppCompatActivity {
 						switch (module) {
 
 							case 6:
-								compassModule(data[0]);
+								compassModule(data);
 								break;
 							case 3:
-								speedModule(data[0]);
+								speedModule(data);
+								break;
+							case 2:
+								distanceModule(data);
 								break;
 
 						}
