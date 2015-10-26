@@ -47,7 +47,9 @@ void socketInit() {
     listen(socketConnection , 3);
 
     //start listening in other thread
-    pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
+	if (socketConnectionThread == null){
+		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);		
+	}
 }
 
 void *listenForConnections(void *arg) {
@@ -109,7 +111,7 @@ void *listenForConnections(void *arg) {
             userSocket = -1;
             printf("Client error\n");
         }
-
+		close(socketConnection);
         onDisconnect();
     }
 }
