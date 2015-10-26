@@ -78,5 +78,6 @@ void onCommand(uint8_t opcode, char *commandData) {
 }
 
 void onDisconnect() {
+	system("echo 'lost con \n' >> /home/pi/file.log");
 	MotorcontrolMovement(0, 0, 0, 0); // stop driving
 }

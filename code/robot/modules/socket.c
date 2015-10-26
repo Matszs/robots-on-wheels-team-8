@@ -146,8 +146,6 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 
         int writeSocket = write(userSocket, client_message, 1025);
 		if (writeSocket == -1 ) {
-			printf("write %d", writeSocket);
-			system("echo 'lost con \n' > /home/pi/file.log");
 			onDisconnect();
 		}
 	}
