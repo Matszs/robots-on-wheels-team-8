@@ -79,10 +79,10 @@ void *listenForConnections(void *arg) {
         printf("Client has connected!\n");
 
         while((read_size = recv(userSocket, client_message, 1024, 0)) > 0 ){
-			int i;
+			int g;
 			printf("| ");
-			for (i = 0; i < 100; i++) {
-				printf("%d ", client_message[i]);
+			for (g = 0; g < 100; g++) {
+				printf("%d ", client_message[g]);
 
 			}
 			printf("| \n");
