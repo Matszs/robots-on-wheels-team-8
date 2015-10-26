@@ -15,7 +15,7 @@ struct sockaddr_in server;
 int socketConnection;
 int userSocket; // only one user can connect at the same time
 
-pthread_t socketConnectionThread = NULL;	// this is our thread identifier
+pthread_t socketConnectionThread;	// this is our thread identifier
 
 // TODO: Sometimes the socket server crashes (only when 'Client error' ?), fix
 
