@@ -144,6 +144,11 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 		}
 		
 
-        write(userSocket, client_message, 1025);
+        int write = write(userSocket, client_message, 1025);
+		printf("write %d", write);
+		if (write == -1 ) {
+
+			onDisconnect();
+		}
 	}
 }
