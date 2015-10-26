@@ -47,8 +47,8 @@ void socketInit() {
     listen(socketConnection , 3);
 
     //start listening in other thread
-	if (socketConnectionThread == null){
-		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);		
+	if (socketConnectionThread == NULL){
+		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
 	}
 }
 
