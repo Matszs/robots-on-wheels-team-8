@@ -6,11 +6,6 @@
 //  Copyright (c) 2015 Mats Otten. All rights reserved.
 
 // sudo gcc -o project project.c -L/usr/local/lib  -lwiringPi -lwiringPiDev -lpthread -lm -lrpigpio
-//
-// speed opt code = 3
-// compas opt code = 6
-
-
 
 #define PORT_NUMBER		1212
 #define DEBUG			0
@@ -54,26 +49,25 @@ void run() {
 	distanceInit();
 	speedInit();
 	compassInit();
-	servoInit();
+//	servoInit();
 
     while(1) {
        //printf("afstand: %d, speed: %f\n", distanceRead(), speedRead());
-		char * speed;
+		char speed[100];
 		sprintf(speed, "%d", speedRead());
-		writeToSocket(OPT_SPEED,  speed);
-		char * compass;
+		writeToSocket(OPT_SPEED,  &speed[0]);
+		char compass[100];
 		sprintf(compass, "%d", compassRead());
-		writeToSocket(OPT_COMPASS,  compass);
-		char * distance;
+		writeToSocket(OPT_COMPASS,  &compass[0]);
+		char distance[100];
 		sprintf(distance, "%d", distanceRead());
-		writeToSocket(OPT_DISTANCE,  distance);
+		writeToSocket(OPT_DISTANCE,  &distance[0]);
 		usleep(100000);
     }
 }
 
 void onCommand(uint8_t opcode, char *commandData) {
-	printf("%d", opcode);
-
+	printf("opt: %d cmd: %d", opcode, commandData[0]);
 	if(opcode == 1) {
 		void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
 		movement direction;
@@ -81,7 +75,6 @@ void onCommand(uint8_t opcode, char *commandData) {
 		unpackMovement((uint8_t)commandData[0], &direction);
 		MotorControl(&direction, *motorCallback);
 	}
-
 	// TODO: add engine ...
 }
 

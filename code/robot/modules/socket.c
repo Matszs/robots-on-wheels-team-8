@@ -10,7 +10,7 @@ void writeToSocket(uint8_t opcode, char *commandData);
 void onDisconnect();
 void *listenForConnections(void *arg);
 void run();
-
+int threatRunning = 0;
 struct sockaddr_in server;
 int socketConnection;
 int userSocket; // only one user can connect at the same time
@@ -47,10 +47,13 @@ void socketInit() {
     listen(socketConnection , 3);
 
     //start listening in other thread
-    pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
+	if (!threatRunning){
+		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
+	}
 }
 
 void *listenForConnections(void *arg) {
+	threatRunning = 1;
     while(1) {
         int c;
         long read_size;
@@ -109,7 +112,8 @@ void *listenForConnections(void *arg) {
             userSocket = -1;
             printf("Client error\n");
         }
-
+		close(socketConnection);
+		socketInit();
         onDisconnect();
     }
 }
