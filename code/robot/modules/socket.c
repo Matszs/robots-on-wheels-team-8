@@ -79,9 +79,15 @@ void *listenForConnections(void *arg) {
         printf("Client has connected!\n");
 
         while((read_size = recv(userSocket, client_message, 1024, 0)) > 0 ){
+			int i;
+			printf("| ");
+			for (i = 0; i < 100; i++) {
+				printf("%d ", client_message[i]);
+
+			}
+			printf("| \n");
         	//write(userSocket, client_message, strlen(client_message));
         	uint8_t opcode = client_message[0];
-			printf("clm: %d ", client_message[1]);
 
 			// Remove the opcode from the client_message
 			int j;
