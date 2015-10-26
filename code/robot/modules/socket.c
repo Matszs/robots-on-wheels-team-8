@@ -112,6 +112,7 @@ void *listenForConnections(void *arg) {
             printf("Client error\n");
         }
 		close(socketConnection);
+		socketInit()
         onDisconnect();
     }
 }
