@@ -15,7 +15,8 @@
 			android:id="@+id/video_view"
 			android:layout_alignParentTop="true"
 			android:layout_alignParentLeft="true"
-			android:layout_alignParentStart="true"/>
+			android:layout_alignParentStart="true"
+			android:background="#fc0398"/>
 	</RelativeLayout>
 
 	<RelativeLayout

@@ -68,11 +68,12 @@ public class ConnectionActivity extends AppCompatActivity {
 
 		VideoView videoView = (VideoView)findViewById(R.id.video_view);
 
-		Uri UriSrc = Uri.parse("http://" + connection.ip + ":8090");
+		//Uri UriSrc = Uri.parse("http://" + connection.ip + ":8090");
+		Uri UriSrc = Uri.parse("rtsp://" + connection.ip + ":8554/unicast");
 
 		videoView.setVideoURI(UriSrc);
-		mediaController = new MediaController(ConnectionActivity.this);
-		videoView.setMediaController(mediaController);
+		//mediaController = new MediaController(ConnectionActivity.this);
+		//videoView.setMediaController(mediaController);
 		videoView.start();
 
 		makeDisplayFullscreen();
