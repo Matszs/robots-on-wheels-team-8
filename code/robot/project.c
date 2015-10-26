@@ -67,7 +67,6 @@ void run() {
 }
 
 void onCommand(uint8_t opcode, char *commandData) {
-	printf("opt: %d cmd: %d", opcode, commandData[0]);
 	if(opcode == 1) {
 		void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
 		movement direction;

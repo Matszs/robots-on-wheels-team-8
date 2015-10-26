@@ -81,6 +81,7 @@ void *listenForConnections(void *arg) {
         while((read_size = recv(userSocket, client_message, 1024, 0)) > 0 ){
         	//write(userSocket, client_message, strlen(client_message));
         	uint8_t opcode = client_message[0];
+			printf("clm: %d ", client_message[1]);
 
 			// Remove the opcode from the client_message
 			int j;
