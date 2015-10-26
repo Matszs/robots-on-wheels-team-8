@@ -60,7 +60,8 @@ public class Joystick {
 
 						analog.setLayoutParams(layoutParams);
 						sendToListeners(layoutParams.leftMargin, layoutParams.topMargin);
-
+						sendToListeners(layoutParams.leftMargin, layoutParams.topMargin);
+						sendToListeners(layoutParams.leftMargin, layoutParams.topMargin);
 						break;
 					case MotionEvent.ACTION_POINTER_DOWN:
 						break;
