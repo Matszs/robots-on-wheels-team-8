@@ -31,7 +31,7 @@ void speedInit() {
 void *measureSpeed (){
 	while (1) {
 		usleep(100000);
-		speed = (11.0 * ticks) / 100;
+		speed = (11.0 * ticks) / 1000;
 		ticks = 0;
 	}
 }
