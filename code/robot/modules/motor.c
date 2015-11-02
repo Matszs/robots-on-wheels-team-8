@@ -10,12 +10,12 @@
 //
 
 #include "motor.h"
-int fd;
+int motor;
 
 void writeData(uint8_t * data, int lenght){
     int i;
 	for (i = 0; i < lenght; i++)
-		wiringPiI2CWrite(fd, data[i]);
+		wiringPiI2CWrite(motor, data[i]);
 }
 
 void unpackMovement(uint8_t input, movement *direction){
@@ -79,8 +79,8 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
 void MotorInit() {
 	uint8_t Totalpower[2]={4,250};
 	uint8_t Softstart[3]={0x91,23,0};
-	fd = wiringPiI2CSetup(0x32);
-	if (fd < 0)
+	motor = wiringPiI2CSetup(0x32);
+	if (motor < 0)
 		printf("wiringPiI2CSetup failed.\n");
 	writeData(&Totalpower[0], 2);
 	writeData(&Softstart[0], 3);

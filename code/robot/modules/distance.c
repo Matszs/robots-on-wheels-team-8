@@ -13,16 +13,8 @@
 #include  <time.h>
 
 void *distancePerformRead(void *arg);
-uint8_t distanceValue = 50;
+int distanceValue = 50;
 int distanceSetup;
-
-void writeDataDistance(uint8_t * data, int lenght){
-    int i;
-	for (i = 0; i < lenght; i++) {
-		int test = wiringPiI2CWrite(distanceSetup, data[i]);
-		printf("TEST: %d   Data: %d  \n", test, data[i]);
-	}
-}
 
 void distanceInit() {
 	distanceSetup = wiringPiI2CSetup(0x70);
@@ -31,7 +23,7 @@ void distanceInit() {
 	pthread_create(&distanceThread, NULL, distancePerformRead, NULL);
 }
 
-uint8_t distanceRead() {
+int distanceRead() {
 	return distanceValue;
 }
 
@@ -41,7 +33,7 @@ void *distancePerformRead(void *arg) {
 
     while(1) {
        wiringPiI2CWriteReg8(distanceSetup, 0, 81);
-       sleep(0.25);
+       usleep(250000);
        distanceValue = wiringPiI2CReadReg8(distanceSetup, 3);
      }
 }
