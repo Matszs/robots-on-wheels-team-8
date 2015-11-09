@@ -11,10 +11,10 @@ import android.util.Log;
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hva_row8_.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
-    private static final String DATABASE_CREATE = "create table connections (id integer primary key, name TEXT, ip TEXT, port TEXT);";
+    private static final String DATABASE_CREATE = "create table connections (id INTEGER PRIMARY KEY, name TEXT, ip TEXT, port TEXT, reconnect INTEGER DEFAULT 0);";
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ public class ConnectionAddDialog extends Dialog {
 				EditText ip = (EditText)findViewById(R.id.connection_add_ip);
 				EditText port = (EditText)findViewById(R.id.connection_add_port);
 				EditText name = (EditText)findViewById(R.id.connection_add_name);
+				CheckBox reconnect = (CheckBox)findViewById(R.id.connection_add_reconnect);
 
 				if(ip.getText().length() == 0) {
 					Toast.makeText(activity, "Please fill in an IP.", Toast.LENGTH_SHORT).show();
@@ -55,7 +57,7 @@ public class ConnectionAddDialog extends Dialog {
 					return;
 				}
 
-				activity.application.connectionDataSource.addConnection(String.valueOf(ip.getText()), String.valueOf(port.getText()), String.valueOf(name.getText()));
+				activity.application.connectionDataSource.addConnection(String.valueOf(ip.getText()), String.valueOf(port.getText()), String.valueOf(name.getText()), reconnect.isChecked());
 				Toast.makeText(activity, "Succesfully added.", Toast.LENGTH_SHORT).show();
 				activity.renewConnectionList();
 				dismiss();

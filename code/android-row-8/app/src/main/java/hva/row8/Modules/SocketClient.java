@@ -3,6 +3,7 @@ package hva.row8.Modules;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,23 +20,33 @@ public class SocketClient {
 	DataOutputStream outputStream;
 	Socket socket;
 	private List<DataReceiveListener> listeners = new ArrayList<DataReceiveListener>();
+	private boolean autoReconnect = false;
 
 	public SocketClient(String url, int port) {
 		this.url = url;
 		this.port = port;
 	}
+
 	public SocketClient(String url) {
 		this.url = url;
 		this.port = 1212;
 	}
+
 	public SocketClient() {
 		this.url = "pi.akoo.nl";
 		this.port = 1212;
 	}
+
+	public void setAutoReconnect(boolean autoReconnect) {
+		this.autoReconnect = autoReconnect;
+	}
+
 	public void setUp() {
 		try
 		{
-			this.socket = new Socket(this.url, this.port);
+			//this.socket = new Socket(this.url, this.port);
+			this.socket = new Socket();
+			this.socket.connect(new InetSocketAddress(this.url, this.port), 3000);
 			final InputStream is = this.socket.getInputStream();
 			this.outputStream = new DataOutputStream(this.socket.getOutputStream());
 
@@ -83,9 +94,11 @@ public class SocketClient {
 		this.outputStream.flush();
 	}
 
+	public void reconnect() {
+		reconnect(0);
+	}
+
 	public void reconnect(int amount) {
-		if(amount <= 0)
-			return;
 
 		try {
 			setUp();
@@ -95,7 +108,7 @@ public class SocketClient {
 			} catch (Exception te) {
 				System.out.println("Cannot sleep thread.");
 			} finally {
-				reconnect(amount - 1);
+				reconnect(++amount);
 			}
 		}
 	}

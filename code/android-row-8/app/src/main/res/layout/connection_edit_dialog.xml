@@ -53,7 +53,7 @@
 		<EditText
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:inputType="textPersonName"
+			android:inputType="number"
 			android:ems="10"
 			android:id="@+id/connection_edit_port"
 			android:layout_alignParentTop="true"
@@ -86,6 +86,32 @@
 			android:layout_alignParentTop="true"
 			android:layout_toRightOf="@+id/textView3"
 			android:layout_toEndOf="@+id/textView3"/>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="Auto reconnect:"
+			android:id="@+id/textView4"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:layout_marginTop="20dp"
+			android:layout_marginRight="5dp"/>
+
+		<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:ems="10"
+			android:id="@+id/connection_edit_reconnect"
+			android:layout_alignParentTop="true"
+			android:layout_toRightOf="@+id/textView4"
+			android:layout_toEndOf="@+id/textView4"/>
 	</RelativeLayout>
 
 	<LinearLayout
