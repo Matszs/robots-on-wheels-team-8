@@ -39,8 +39,7 @@ void socketInit() {
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
 	
-	if (setsockopt (sockfd, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,
-					sizeof(timeout)) < 0)
+	if (setsockopt (sockfd, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
 		error("setsockopt failed\n");
 
     //Bind
