@@ -34,6 +34,10 @@ void socketInit() {
     int yes = 1;
     if ( setsockopt(socketConnection, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 )
         printf("Error so_reusaddr");
+	
+	int keepAlive = 1;
+	if(setsockopt(socketConnection, SOL_SOCKET, SO_KEEPALIVE, &keepAlive, 1) < 0)
+		printf("Error SO_KEEPALIVE");
 
     //Bind
     if( bind(socketConnection,(struct sockaddr *)&server , sizeof(server)) == -1)
