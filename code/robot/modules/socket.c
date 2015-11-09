@@ -153,6 +153,8 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 
         int writeSocket = write(userSocket, client_message, 1025);
 		if (writeSocket == -1 ) {
+			userSocket = -1;
+			socketInit();
 			onDisconnect();
 		}
 	}
