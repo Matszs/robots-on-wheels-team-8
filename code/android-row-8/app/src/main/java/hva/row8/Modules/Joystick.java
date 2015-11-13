@@ -1,6 +1,8 @@
 package hva.row8.Modules;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -20,9 +22,14 @@ public class Joystick {
 	private Activity activity;
 	private RelativeLayout container;
 	private RelativeLayout analog;
+	private int radius = 0;
 	private int xHolder;
 	private int yHolder;
 	private List<MoveListener> listeners = new ArrayList<MoveListener>();
+	private boolean moveJoystick = false;
+
+	private static final long DOUBLE_CLICK_TIME_DELTA = 300;//milliseconds
+	private long lastClickTime = 0;
 
 	public Joystick(Activity activity, RelativeLayout container, RelativeLayout analog) {
 		this.container = container;
@@ -35,13 +42,81 @@ public class Joystick {
 		Calculation.startX = containerParams.width / 2 - (layoutParams.width / 2); // set default location calculation
 		Calculation.startY = containerParams.height / 2 - (layoutParams.height / 2); // set default location calculation
 		//Calculation.radius = (layoutParams.height / 2); // radius in DP instead of pixels
-		Calculation.radius = (int) (layoutParams.height * activity.getResources().getDisplayMetrics().density + 0.5f) / 2; // radius in pixels instead of DP.
+		this.radius = Calculation.radius = (int) (layoutParams.height * activity.getResources().getDisplayMetrics().density + 0.5f) / 2; // radius in pixels instead of DP.
+
+		SharedPreferences settings = activity.getSharedPreferences("JoyStickPref", 0);
+		int x = settings.getInt("x", -1);
+
+		if(x >= 0) {
+			containerParams.leftMargin = x;
+			container.setLayoutParams(containerParams);
+		}
+
 	}
 
 	public void bind() {
+		// Make container movable on double press
+		container.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				int cursorX = (int) event.getRawX();
+
+				RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) container.getLayoutParams();
+
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+
+						if(moveJoystick) {
+							xHolder = cursorX - layoutParams.leftMargin;
+						}
+						break;
+					case MotionEvent.ACTION_UP:
+						long clickTime = System.currentTimeMillis();
+						if (clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA)
+							moveJoystick = !moveJoystick;
+
+						lastClickTime = clickTime;
+
+						container.setAlpha((moveJoystick ? 0.5f : 1f));
+
+						break;
+
+					case MotionEvent.ACTION_MOVE:
+						if(moveJoystick) {
+							int newX = cursorX - xHolder;
+
+							if (newX < 0)
+								newX = 0;
+
+							DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
+							int width = displayMetrics.widthPixels;
+							int height = displayMetrics.heightPixels;
+
+							if(newX > (width - radius * 2))
+								newX = (width - radius * 2);
+
+							layoutParams.leftMargin = newX;
+
+							container.setLayoutParams(layoutParams);
+
+							SharedPreferences settings = activity.getSharedPreferences("JoyStickPref", 0);
+							SharedPreferences.Editor editor = settings.edit();
+							editor.putInt("x", newX);
+							editor.commit();
+
+						}
+						break;
+				}
+
+				return true;
+			}
+		});
+
 		analog.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				if(moveJoystick)
+					return true;
 				int cursorX = (int) event.getRawX();
 				int cursorY = (int) event.getRawY();
 

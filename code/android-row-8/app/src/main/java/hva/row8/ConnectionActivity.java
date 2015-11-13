@@ -2,6 +2,7 @@ package hva.row8;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Looper;
@@ -9,10 +10,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
@@ -122,6 +126,25 @@ public class ConnectionActivity extends AppCompatActivity {
 		joyStickInit();
 
 		new Thread(new ClientThread()).start();
+	}
+
+	private void displayLicensePlateToast(final String text) {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+				LayoutInflater inflater = getLayoutInflater();
+				View layout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+
+				TextView numberPlateText = (TextView) layout.findViewById(R.id.number_plate);
+				numberPlateText.setText(text);
+
+				Toast toast = new Toast(getApplicationContext());
+				toast.setGravity(Gravity.BOTTOM, 0, 100);
+				toast.setDuration(Toast.LENGTH_SHORT);
+				toast.setView(layout);
+				toast.show();
+			}
+		});
 	}
 
 	public void writeStatus(String statusText) {
@@ -330,6 +353,13 @@ public class ConnectionActivity extends AppCompatActivity {
 								break;
 							case 2:
 								distanceModule(data);
+								break;
+							case 7:
+								try {
+									displayLicensePlateToast(new String(data, "UTF-8"));
+								} catch (Exception e) {
+									displayLicensePlateToast("ERROR!");
+								}
 								break;
 						}
 					} catch (Exception e) {
