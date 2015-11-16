@@ -44,9 +44,11 @@ public class Joystick {
 		//Calculation.radius = (layoutParams.height / 2); // radius in DP instead of pixels
 		this.radius = Calculation.radius = (int) (layoutParams.height * activity.getResources().getDisplayMetrics().density + 0.5f) / 2; // radius in pixels instead of DP.
 
+		// Get position of joystick
 		SharedPreferences settings = activity.getSharedPreferences("JoyStickPref", 0);
 		int x = settings.getInt("x", -1);
 
+		// If position is set in settings, set in view, otherwise use default
 		if(x >= 0) {
 			containerParams.leftMargin = x;
 			container.setLayoutParams(containerParams);

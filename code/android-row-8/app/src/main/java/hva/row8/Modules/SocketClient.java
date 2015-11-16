@@ -20,7 +20,8 @@ public class SocketClient {
 	DataOutputStream outputStream;
 	Socket socket;
 	private List<DataReceiveListener> listeners = new ArrayList<DataReceiveListener>();
-	private boolean autoReconnect = false;
+    byte[] buffer = new byte[1025];
+    InetSocketAddress socketAddress = null;
 
 	public SocketClient(String url, int port) {
 		this.url = url;
@@ -37,22 +38,25 @@ public class SocketClient {
 		this.port = 1212;
 	}
 
-	public void setAutoReconnect(boolean autoReconnect) {
-		this.autoReconnect = autoReconnect;
-	}
+    public void setUp() {
+        setUp(false);
+    }
 
-	public void setUp() {
+	public void setUp(boolean reConnect) {
+        Thread readThread;
 		try
 		{
+            if(socketAddress == null)
+                socketAddress = new InetSocketAddress(this.url, this.port);
 			//this.socket = new Socket(this.url, this.port);
 			this.socket = new Socket();
-			this.socket.connect(new InetSocketAddress(this.url, this.port), 3000);
-			final InputStream is = this.socket.getInputStream();
+			this.socket.connect(socketAddress, 3000);
+            final InputStream is = this.socket.getInputStream();
 			this.outputStream = new DataOutputStream(this.socket.getOutputStream());
 
-			Thread readThread = new Thread(){
+			readThread = new Thread(){
 				public void run(){
-					byte[] buffer = new byte[1025];
+					buffer = new byte[1025];
 					int length = 0;
 					try {
 						while((length = is.read(buffer)) > 0) {
@@ -73,13 +77,13 @@ public class SocketClient {
 			};
 
 			readThread.start();
-		}catch(IOException e) {
-			for(DataReceiveListener dataReceiveListener : listeners)
-				dataReceiveListener.onConnectionDrop();
+		}catch(Exception e) {
+            for(DataReceiveListener dataReceiveListener : listeners)
+                dataReceiveListener.onConnectionDrop();
 
 			e.printStackTrace();
 		}
-	}
+    }
 	public void stop() throws IOException {
 		this.socket.close();
 	}
@@ -101,10 +105,14 @@ public class SocketClient {
 	public void reconnect(int amount) {
 
 		try {
-			setUp();
+			if(this.socket != null) {
+                this.socket.close();
+                this.socket = null;
+            }
+			setUp(true);
 		} catch (Exception e) {
 			try{
-				Thread.sleep(1000);
+				Thread.sleep(10000);
 			} catch (Exception te) {
 				System.out.println("Cannot sleep thread.");
 			} finally {

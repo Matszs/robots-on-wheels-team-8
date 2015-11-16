@@ -54,6 +54,7 @@ public class ConnectionActivity extends AppCompatActivity {
 	SocketClient socketConnection;
 	private boolean mVisible;
 	private TextView status;
+    private boolean isActive = false;
 
 	private final Handler mHideHandler = new Handler();
 	private final Runnable mHideRunnable = new Runnable() {
@@ -128,18 +129,24 @@ public class ConnectionActivity extends AppCompatActivity {
 		new Thread(new ClientThread()).start();
 	}
 
-	private void displayLicensePlateToast(final String text) {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
-			@Override
-			public void run() {
-				LayoutInflater inflater = getLayoutInflater();
-				View layout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+    @Override
+    public void onStart() {
+        super.onStart();
+        isActive = true;
+    }
 
-				TextView numberPlateText = (TextView) layout.findViewById(R.id.number_plate);
-				numberPlateText.setText(text);
+    private void displayLicensePlateToast(final String text) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_layout_root));
 
-				Toast toast = new Toast(getApplicationContext());
-				toast.setGravity(Gravity.BOTTOM, 0, 100);
+                TextView numberPlateText = (TextView) layout.findViewById(R.id.number_plate);
+                numberPlateText.setText(text);
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.BOTTOM, 0, 100);
 				toast.setDuration(Toast.LENGTH_SHORT);
 				toast.setView(layout);
 				toast.show();
@@ -159,6 +166,10 @@ public class ConnectionActivity extends AppCompatActivity {
 		super.onDestroy();
 		VideoView videoView = (VideoView)findViewById(R.id.video_view);
 		videoView.stopPlayback();
+        isActive = false;
+        try {
+            socketConnection.stop();
+        } catch (Exception e) {}
 	}
 
 	protected void joyStickInit() {
@@ -166,14 +177,14 @@ public class ConnectionActivity extends AppCompatActivity {
 		final RelativeLayout joystickAnalog = (RelativeLayout)findViewById(R.id.joystick_analog);
 
 		joystick = new Joystick(ConnectionActivity.this, joystickContainer, joystickAnalog);
-		joystick.bind();
-		joystick.addListener(new MoveListener() {
-			@Override
-			public void onMove(int x, int y) {
-				int value = Calculation.calculateValue(x, y);
-				try {
-					socketConnection.write(1, new byte[]{(byte) value});
-					System.out.println("Value: " + value);
+        joystick.bind();
+        joystick.addListener(new MoveListener() {
+            @Override
+            public void onMove(int x, int y) {
+                int value = Calculation.calculateValue(x, y);
+                try {
+                    System.out.println("Value: " + value);
+                    socketConnection.write(1, new byte[]{(byte) value});
 				} catch (Exception e) {
 
 				}
@@ -208,7 +219,7 @@ public class ConnectionActivity extends AppCompatActivity {
 		mVisible = false;
 
 		// Schedule a runnable to remove the status and navigation bar after a delay
-		mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
 		mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
 	}
 
@@ -220,11 +231,11 @@ public class ConnectionActivity extends AppCompatActivity {
 
 			// Note that some of these constants are new as of API 16 (Jelly Bean)
 			// and API 19 (KitKat). It is safe to use them, as they are inlined
-			// at compile-time and do nothing on earlier devices.
-			mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-					| View.SYSTEM_UI_FLAG_FULLSCREEN
-					| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            // at compile-time and do nothing on earlier devices.
+            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 		}
@@ -243,7 +254,7 @@ public class ConnectionActivity extends AppCompatActivity {
 		mVisible = true;
 
 		// Schedule a runnable to display UI elements after a delay
-		mHideHandler.removeCallbacks(mHidePart2Runnable);
+        mHideHandler.removeCallbacks(mHidePart2Runnable);
 		mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
 	}
 
@@ -259,15 +270,6 @@ public class ConnectionActivity extends AppCompatActivity {
 		}
 	};
 
-	@Override
-	protected void onStop() {
-		try {
-			socketConnection.stop();
-		} catch (Exception e) {
-			// If there is no socket connection or anything, not a problem.
-		}
-		super.onStop();
-	}
 
 	private void compassModule(final byte[] degreesData) {
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -336,60 +338,66 @@ public class ConnectionActivity extends AppCompatActivity {
 		@Override
 		public void run() {
 			socketConnection = new SocketClient(connection.ip, Integer.parseInt(connection.port));
-			socketConnection.setAutoReconnect(connection.reconnect);
 			socketConnection.addListener(new DataReceiveListener() {
-				@Override
-				public void onDataReceive(int module, byte[] data) {
-					try {
-						writeStatus("Connected");
-						//System.out.println("Module: " + module);
-						//System.out.println("Data: " + new String(data, "UTF-8"));
-						switch (module) {
-							case 6:
-								compassModule(data);
-								break;
-							case 3:
-								speedModule(data);
-								break;
-							case 2:
-								distanceModule(data);
-								break;
-							case 7:
-								try {
-									displayLicensePlateToast(new String(data, "UTF-8"));
-								} catch (Exception e) {
-									displayLicensePlateToast("ERROR!");
-								}
-								break;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+                @Override
+                public void onDataReceive(int module, byte[] data) {
+                    try {
+                        writeStatus("Connected");
+                        //System.out.println("Module: " + module);
+                        //System.out.println("Data: " + new String(data, "UTF-8"));
+                        switch (module) {
+                            case 6:
+                                compassModule(data);
+                                break;
+                            case 3:
+                                speedModule(data);
+                                break;
+                            case 2:
+                                distanceModule(data);
+                                break;
+                            case 7:
+                                try {
+                                    displayLicensePlateToast(new String(data, "UTF-8"));
+                                } catch (Exception e) {
+                                    displayLicensePlateToast("ERROR!");
+                                }
+                                break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-				@Override
-				public void onConnectionDrop() {
-					if (!connection.reconnect) {
-						new Handler(Looper.getMainLooper()).post(new Runnable() {
-							@Override
-							public void run() {
-								Toast.makeText(ConnectionActivity.this, "Couldn't connect to " + connection.name + ".", Toast.LENGTH_SHORT).show();
-							}
-						});
+                @Override
+                public void onConnectionDrop() {
+                    if(isActive) {
+                        if (!connection.reconnect) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(ConnectionActivity.this, "Couldn't connect to " + connection.name + ".", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
-						ConnectionActivity.this.finish();
-					} else {
-						new Handler(Looper.getMainLooper()).post(new Runnable() {
-							@Override
-							public void run() {
-								writeStatus("Connection dropped");
-							}
-						});
+                            ConnectionActivity.this.finish();
+                        } else {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    writeStatus("Connection dropped");
+                                }
+                            });
 
-						socketConnection.reconnect();
-					}
-				}
-			});
+                            try {
+                                Thread.sleep(4000);
+                                socketConnection.reconnect();
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }
+                }
+            });
 			socketConnection.setUp();
 		}
 	}
