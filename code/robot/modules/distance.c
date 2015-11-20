@@ -7,7 +7,7 @@
 
 #include  <stdio.h>
 #include  <unistd.h>
-#include  "rpiGpio.h"
+// #include  "rpiGpio.h"
 #include  <wiringPi.h>
 #include  <softPwm.h>
 #include  <time.h>

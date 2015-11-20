@@ -2,7 +2,7 @@ CC=gcc
 CCFLAGS=
 
 
-LD_LIBS=-lwiringPi -lwiringPiDev -lpthread -lm -lrpigpio
+LD_LIBS=-lwiringPi -lwiringPiDev -lpthread -lm 
 LD_FLAGS=-L/usr/local/lib
 
 
