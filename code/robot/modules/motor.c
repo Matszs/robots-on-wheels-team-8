@@ -65,6 +65,10 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
 		MotorC[5] = 0;
 		MotorC[6] = 0;
     } else {
+        printf("lft; %d\n", speedTable[rotationSpeedLeft]);
+        printf("rgh; %d\n", speedTable[rotationSpeedRight]);
+        printf("------");
+
 		MotorC[0] = 7;
 		MotorC[1] = 3;
 		MotorC[2] = speedTable[rotationSpeedLeft];
