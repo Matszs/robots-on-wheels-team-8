@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+				android:id="@+id/toast_layout_root"
+				android:background="@drawable/toast_license_plate_holder">
+
+	<RelativeLayout
+		android:layout_width="80dp"
+		android:layout_height="wrap_content"
+		android:background="@drawable/toast_license_plate_eu"
+		android:id="@+id/relativeLayout">
+
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="NL"
+			android:textSize="30dp"
+			android:textColor="#fff"
+			android:padding="20dp"
+			android:layout_alignParentTop="true"
+			android:layout_centerHorizontal="true"/>
+
+
+	</RelativeLayout>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:text="12-GBF-4"
+		android:textSize="30dp"
+		android:textStyle="bold"
+		android:id="@+id/number_plate"
+		android:textColor="#000"
+		android:padding="20dp"
+		android:layout_alignParentTop="true"
+		android:layout_toRightOf="@+id/relativeLayout"
+		android:layout_toEndOf="@+id/relativeLayout"/>
+
+
+
+</RelativeLayout>

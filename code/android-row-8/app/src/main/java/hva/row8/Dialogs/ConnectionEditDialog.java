@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class ConnectionEditDialog extends Dialog {
 	private EditText ip;
 	private EditText port;
 	private EditText name;
+	private CheckBox reconnect;
 
 	private Connection connection;
 
@@ -56,10 +58,12 @@ public class ConnectionEditDialog extends Dialog {
 		ip = (EditText)findViewById(R.id.connection_edit_ip);
 		port = (EditText)findViewById(R.id.connection_edit_port);
 		name = (EditText)findViewById(R.id.connection_edit_name);
+		reconnect = (CheckBox)findViewById(R.id.connection_edit_reconnect);
 
 		ip.setText(connection.ip);
 		port.setText(connection.port);
 		name.setText(connection.name);
+		reconnect.setChecked(connection.reconnect);
 
 		save.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -77,7 +81,7 @@ public class ConnectionEditDialog extends Dialog {
 					return;
 				}
 
-				activity.application.connectionDataSource.editConnection(connection.id, String.valueOf(ip.getText()), String.valueOf(port.getText()), String.valueOf(name.getText()));
+				activity.application.connectionDataSource.editConnection(connection.id, String.valueOf(ip.getText()), String.valueOf(port.getText()), String.valueOf(name.getText()), reconnect.isChecked());
 				Toast.makeText(activity, "Succesfully editted.", Toast.LENGTH_SHORT).show();
 				activity.renewConnectionList();
 				dismiss();
