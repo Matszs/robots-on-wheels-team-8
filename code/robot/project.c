@@ -17,6 +17,8 @@
 #define OPT_CAMERA		4
 #define OPT_SERVO		5
 #define OPT_COMPASS		6
+#define OPT_WALL_STOP	8
+#define OPT_VIBRATE		9
 
 #include <stdio.h>
 #include <string.h> //strlen
@@ -26,6 +28,9 @@
 #include <pthread.h> // threads
 #include <wiringPi.h>
 #include <time.h>
+
+int automaticStop = 0;
+int isDriving = 0;
 //#include  "rpiGpio.h" // remove when WiringPi fully included
 
 #include  <softPwm.h>
@@ -36,6 +41,7 @@
 #include "modules/speed.c"
 #include "modules/compass.c"
 #include "modules/servo.c"
+#include "modules/wall-stop.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -57,12 +63,17 @@ void run() {
 		char speed[100];
 		sprintf(speed, "%d", speedRead());
 		writeToSocket(OPT_SPEED,  &speed[0]);
+
 		char compass[100];
 		sprintf(compass, "%d", compassRead());
 		writeToSocket(OPT_COMPASS,  &compass[0]);
+
 		char distance[100];
 		sprintf(distance, "%d", distanceRead());
 		writeToSocket(OPT_DISTANCE,  &distance[0]);
+
+		writeToSocket(OPT_WALL_STOP, &automaticStop);
+
 		usleep(100000);
     }
 }
@@ -74,6 +85,9 @@ void onCommand(uint8_t opcode, char *commandData) {
 
 		unpackMovement((uint8_t)commandData[0], &direction);
 		MotorControl(&direction, *motorCallback);
+	} else if(opcode == 8) {
+	    automaticStop = (uint8_t)(commandData[0]);
+	    printf("stop: %d", automaticStop);
 	}
 	// TODO: add engine ...
 }

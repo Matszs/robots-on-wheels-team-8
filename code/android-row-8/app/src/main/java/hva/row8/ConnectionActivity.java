@@ -1,15 +1,19 @@
 package hva.row8;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,7 +24,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,6 +61,7 @@ public class ConnectionActivity extends AppCompatActivity {
 	SocketClient socketConnection;
 	private boolean mVisible;
 	private TextView status;
+	private RelativeLayout wallHitHolder;
     private boolean isActive = false;
 
 	private final Handler mHideHandler = new Handler();
@@ -91,7 +99,9 @@ public class ConnectionActivity extends AppCompatActivity {
 		connection = application.connectionDataSource.getConnection(connectionId);
 		mContentView = findViewById(R.id.connection_holder);
 		videoOverlay = (RelativeLayout)findViewById(R.id.video_overlay);
+		wallHitHolder = (RelativeLayout)findViewById(R.id.wall_hit_holder);
 		status = (TextView)findViewById(R.id.status);
+		CheckBox wallHit = (CheckBox)findViewById(R.id.wall_hit);
 
 		writeStatus("Initialising...");
 
@@ -102,7 +112,19 @@ public class ConnectionActivity extends AppCompatActivity {
 			}
 		});
 
-		hide(); // Automatically hide the controls
+		wallHit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				try {
+					socketConnection.write(8, new byte[]{(byte) (isChecked ? 1 : 0)});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+		if(AUTO_HIDE)
+			hide(); // Automatically hide the controls
 
 		VideoView videoView = (VideoView)findViewById(R.id.video_view);
 		//Uri UriSrc = Uri.parse("http://" + connection.ip + ":8090");
@@ -150,8 +172,28 @@ public class ConnectionActivity extends AppCompatActivity {
 				toast.setDuration(Toast.LENGTH_SHORT);
 				toast.setView(layout);
 				toast.show();
+
+				Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				mVibrator.vibrate(300);
 			}
 		});
+	}
+
+	@SuppressLint("NewApi")
+	private int getSoftbuttonsbarHeight() {
+		// getRealMetrics is only available with API 17 and +
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			int usableHeight = metrics.widthPixels;
+			getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+			int realHeight = metrics.widthPixels;
+			if (realHeight > usableHeight)
+				return realHeight - usableHeight;
+			else
+				return 0;
+		}
+		return 0;
 	}
 
 	public void writeStatus(String statusText) {
@@ -216,6 +258,7 @@ public class ConnectionActivity extends AppCompatActivity {
 			actionBar.hide();
 		}*/
 		status.setVisibility(View.GONE);
+		wallHitHolder.setVisibility(View.GONE);
 		mVisible = false;
 
 		// Schedule a runnable to remove the status and navigation bar after a delay
@@ -231,13 +274,14 @@ public class ConnectionActivity extends AppCompatActivity {
 
 			// Note that some of these constants are new as of API 16 (Jelly Bean)
 			// and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
+			// at compile-time and do nothing on earlier devices.
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
 		}
 	};
 
@@ -249,8 +293,8 @@ public class ConnectionActivity extends AppCompatActivity {
 	@SuppressLint("InlinedApi")
 	private void show() {
 		// Show the system bar
-		mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+		mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
 		mVisible = true;
 
 		// Schedule a runnable to display UI elements after a delay
@@ -266,7 +310,19 @@ public class ConnectionActivity extends AppCompatActivity {
 			if (actionBar != null) {
 				actionBar.show();
 			}*/
+
+			ViewGroup.MarginLayoutParams statusLayoutParams = (ViewGroup.MarginLayoutParams) status.getLayoutParams();
+			//statusLayoutParams.setMargins(0, 0, getSoftbuttonsbarHeight() + 100, 0); // llp.setMargins(left, top, right, bottom);
+			statusLayoutParams.rightMargin = getSoftbuttonsbarHeight();
+
+			ViewGroup.MarginLayoutParams wallHitHolderParams = (ViewGroup.MarginLayoutParams) wallHitHolder.getLayoutParams();
+			//wallHitHolderParams.setMargins(0, 0, getSoftbuttonsbarHeight() + 100, 0); // llp.setMargins(left, top, right, bottom);
+			wallHitHolderParams.rightMargin = getSoftbuttonsbarHeight();
+
 			status.setVisibility(View.VISIBLE);
+			status.setLayoutParams(statusLayoutParams);
+			wallHitHolder.setVisibility(View.VISIBLE);
+			wallHitHolder.setLayoutParams(wallHitHolderParams);
 		}
 	};
 
@@ -333,6 +389,22 @@ public class ConnectionActivity extends AppCompatActivity {
 		});
 	}
 
+	private void wallStopModule(final byte[] value) {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+				CheckBox wallHitCheckbox = (CheckBox)findViewById(R.id.wall_hit);
+
+				if(wallHitCheckbox.isChecked() && value[0] == 0) {
+					wallHitCheckbox.setChecked(false);
+				} else if(!wallHitCheckbox.isChecked() && value[0] == 1) {
+					wallHitCheckbox.setChecked(true);
+				}
+
+			}
+		});
+	}
+
 	class ClientThread implements Runnable {
 
 		@Override
@@ -362,6 +434,13 @@ public class ConnectionActivity extends AppCompatActivity {
                                     displayLicensePlateToast("ERROR!");
                                 }
                                 break;
+							case 8:
+								wallStopModule(data);
+								break;
+							case 9:
+								Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+								mVibrator.vibrate((int)data[0] * 100);
+								break;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
