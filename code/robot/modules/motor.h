@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 //uint8_t speedTable[7] = {0x0,0x46,0x59,0x6c,0x7f,0x92,0xa5};
-uint8_t speedTable[7] = {0x0,10,20,30,40,50,70};
+uint8_t speedTable[7] = {0x0,1,2,3,4,5,6};
 
 typedef struct {
     uint8_t Left:4;
