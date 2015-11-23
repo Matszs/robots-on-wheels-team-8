@@ -19,7 +19,7 @@ void wallStopInit() {
 
 void *wallStopHandler(void *arg) {
     while(1) {
-        // TODO: Stop thread when automaticStop is 0 and re-start thread when enabled. 
+        // TODO: Stop thread when automaticStop is 0 and re-start thread when enabled.
         if(automaticStop) {
             int distance = distanceRead();
             if(isDriving && distance < 30 && distance > 0) {
