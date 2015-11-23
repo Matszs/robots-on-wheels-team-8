@@ -75,6 +75,7 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
 		MotorC[5] = speedTable[rotationSpeedRight];
 		MotorC[6] = (rotationSpeedRight == 0 ? 0 : richtingRechts);
     }
+    printf("writeData\n");
 	writeData(&MotorC[0], 7);
 }
 
