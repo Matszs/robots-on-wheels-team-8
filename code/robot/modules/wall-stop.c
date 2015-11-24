@@ -24,7 +24,7 @@ void *wallStopHandler(void *arg) {
             int distance = distanceRead();
             printf("Distance: %d\n", distance);
             printf("isDriving: %d\n", isDriving);
-            if(isDriving && distance < 30 && distance > 0) {
+            if(isDriving && distance < 50 && distance > 0) {
                 MotorcontrolMovement(0, 0, 0, 0); // stop driving
 
                 char wallStop[100];
