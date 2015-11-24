@@ -31,6 +31,7 @@
 
 int automaticStop = 0;
 int isDriving = 0;
+int hasToStop = 0;
 //#include  "rpiGpio.h" // remove when WiringPi fully included
 
 #include  <softPwm.h>

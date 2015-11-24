@@ -25,11 +25,15 @@ void *wallStopHandler(void *arg) {
             printf("Distance: %d\n", distance);
             printf("isDriving: %d\n", isDriving);
             if(isDriving && distance < 50 && distance > 0) {
-                MotorcontrolMovement(0, 0, 0, 0); // stop driving
+                if(hasToStop == 0)
+                    MotorcontrolMovement(0, 0, 0, 0); // stop driving
+                hasToStop = 1;
 
                 char wallStop[100];
                 wallStop[0] = 1;
                 writeToSocket(OPT_VIBRATE, &wallStop[0]);
+            } else {
+                hasToStop = 0;
             }
         }
 
