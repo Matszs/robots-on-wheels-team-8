@@ -23,14 +23,16 @@ void *wallStopHandler(void *arg) {
         if(automaticStop) {
             int distance = distanceRead();
             printf("hasToStop: %d\n", hasToStop);
-            if(isDriving && distance < 50 && distance > 0) {
-                if(hasToStop == 0)
-                    MotorcontrolMovement(0, 0, 0, 0); // stop driving
-                hasToStop = 1;
+            if(distance < 50 && distance > 0) {
+                if(isDriving) {
+                    if(hasToStop == 0)
+                        MotorcontrolMovement(0, 0, 0, 0); // stop driving
+                    hasToStop = 1;
 
-                char wallStop[100];
-                wallStop[0] = 1;
-                writeToSocket(OPT_VIBRATE, &wallStop[0]);
+                    char wallStop[100];
+                    wallStop[0] = 1;
+                    writeToSocket(OPT_VIBRATE, &wallStop[0]);
+                }
             } else {
                 hasToStop = 0;
             }
