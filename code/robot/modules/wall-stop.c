@@ -22,23 +22,23 @@ void *wallStopHandler(void *arg) {
         // TODO: Stop thread when automaticStop is 0 and re-start thread when enabled.
         if(automaticStop) {
             int distance = distanceRead();
-            printf("hasToStop: %d\n", hasToStop);
             if(distance < 50 && distance > 0) {
                 if(isDriving) {
-                    if(hasToStop == 0)
-                        MotorcontrolMovement(0, 0, 0, 0); // stop driving
-                    hasToStop = 1;
+                    if(hasToStop == 0) {
+                        char wallStop[100];
+                        wallStop[0] = 1;
+                        writeToSocket(OPT_VIBRATE, &wallStop[0]);
 
-                    char wallStop[100];
-                    wallStop[0] = 1;
-                    writeToSocket(OPT_VIBRATE, &wallStop[0]);
+                        MotorcontrolMovement(0, 0, 0, 0); // stop driving
+                    }
+                    hasToStop = 1;
                 }
             } else {
                 hasToStop = 0;
             }
         }
 
-        usleep(20000); // 200 micro seconds ????
+        usleep(200000); // 200 micro seconds ????
     }
 }
 
