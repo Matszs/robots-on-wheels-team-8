@@ -33,7 +33,7 @@ void *wallStopHandler(void *arg) {
             }
         }
 
-        usleep(200000); // 200 micro seconds ????
+        usleep(20000); // 200 micro seconds ????
     }
 }
 
