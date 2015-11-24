@@ -76,6 +76,8 @@ void run() {
 		sprintf(autoStopValue, "%d", automaticStop);
 		writeToSocket(OPT_WALL_STOP, &autoStopValue[0]);
 
+		printf("AutoStopValue: %d\n", automaticStop);
+
 		usleep(100000);
     }
 }
