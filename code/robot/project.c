@@ -72,7 +72,9 @@ void run() {
 		sprintf(distance, "%d", distanceRead());
 		writeToSocket(OPT_DISTANCE,  &distance[0]);
 
-		writeToSocket(OPT_WALL_STOP, &automaticStop);
+        char autoStopValue[100];
+		sprintf(autoStopValue, "%d", automaticStop);
+		writeToSocket(OPT_WALL_STOP, &autoStopValue[0]);
 
 		usleep(100000);
     }
