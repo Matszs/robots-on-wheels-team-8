@@ -22,6 +22,8 @@ void *wallStopHandler(void *arg) {
         // TODO: Stop thread when automaticStop is 0 and re-start thread when enabled.
         if(automaticStop) {
             int distance = distanceRead();
+            printf("Distance: %d\n", distance);
+            printf("isDriving: %d\n", isDriving);
             if(isDriving && distance < 30 && distance > 0) {
                 MotorcontrolMovement(0, 0, 0, 0); // stop driving
 
