@@ -101,6 +101,7 @@ void onCommand(uint8_t opcode, char *commandData) {
         while (fgets(buf, sizeof(buf), ls) != 0) {
             //printf("%s", buf);
         }
+        printf("%s", buf);
         writeToSocket(OPT_LICENSE, &buf[0]);
         pclose(ls);
 	}
