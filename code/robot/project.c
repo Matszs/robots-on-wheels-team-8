@@ -99,10 +99,10 @@ void onCommand(uint8_t opcode, char *commandData) {
 	    FILE *ls = popen("cd /home/pi/cam && fswebcam -r 1920x1080 -S 20 --no-banner --quiet alpr.jpg && tesseract -psm 7 alpr.jpg stdout", "r");
         char buf[100];
         while (fgets(buf, sizeof(buf), ls) != 0) {
-            //printf("%s", buf);
+            printf("%s", buf);
+            writeToSocket(OPT_LICENSE, &buf[0]);
         }
-        printf("%s", buf);
-        writeToSocket(OPT_LICENSE, &buf[0]);
+
         pclose(ls);
 	}
 	// TODO: add engine ...
