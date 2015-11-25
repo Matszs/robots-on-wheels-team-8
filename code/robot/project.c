@@ -97,7 +97,7 @@ void onCommand(uint8_t opcode, char *commandData) {
 	    //system("cd /home/pi/cam && fswebcam -r 1920x1080 -S 20 --no-banner --quiet alpr.jpg && tesseract -psm 7 alpr.jpg stdout");
         system("sudo /etc/init.d/robot stop-cam");
 
-	    FILE *ls = popen("cd /home/pi/cam && && fswebcam -r 1920x1080 -S 1 -D 1 --no-banner --quiet alpr.jpg && tesseract -psm 7 alpr.jpg stdout", "r");
+	    FILE *ls = popen("cd /home/pi/cam && fswebcam -r 1920x1080 -S 1 -D 1 --no-banner --quiet alpr.jpg && tesseract -psm 7 alpr.jpg stdout", "r");
         char buf[100];
         while (fgets(buf, sizeof(buf), ls) != 0) {
             printf("%s", buf);
