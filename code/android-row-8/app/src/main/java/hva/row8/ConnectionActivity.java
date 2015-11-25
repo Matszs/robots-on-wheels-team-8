@@ -123,6 +123,18 @@ public class ConnectionActivity extends AppCompatActivity {
 			}
 		});
 
+		Button licensePlateButton = (Button)findViewById(R.id.read_license_plate);
+		licensePlateButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
+					socketConnection.write(7, new byte[]{ });
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
 		if(AUTO_HIDE)
 			hide(); // Automatically hide the controls
 

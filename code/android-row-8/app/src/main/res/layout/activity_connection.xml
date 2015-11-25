@@ -145,6 +145,13 @@
 			android:layout_alignParentEnd="true"
 			android:textColor="#fff"/>
 
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Kenteken lezen"
+			android:id="@+id/read_license_plate"
+			android:layout_alignBottom="@+id/joystick_container"
+			android:layout_centerHorizontal="true"/>
 
 
 	</RelativeLayout>
