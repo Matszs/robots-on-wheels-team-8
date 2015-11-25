@@ -169,7 +169,24 @@ public class ConnectionActivity extends AppCompatActivity {
         isActive = true;
     }
 
-    private void displayLicensePlateToast(final String text) {
+    private void displayLicensePlateToast(byte[] textData) {
+
+		int i;
+		for (i = 0; i < textData.length && textData[i] != 0; i++);
+
+		String text;
+		try {
+			text = new String(textData, 0, i, "us-ascii");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
+		final String textFormatted = text.replaceAll("\\s+","");
+
+		if(textFormatted.isEmpty())
+			return;
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -177,10 +194,37 @@ public class ConnectionActivity extends AppCompatActivity {
                 View layout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_layout_root));
 
                 TextView numberPlateText = (TextView) layout.findViewById(R.id.number_plate);
-                numberPlateText.setText(text);
+                numberPlateText.setText(textFormatted);
 
                 Toast toast = new Toast(getApplicationContext());
                 toast.setGravity(Gravity.BOTTOM, 0, 100);
+				toast.setDuration(Toast.LENGTH_SHORT);
+				toast.setView(layout);
+				toast.show();
+
+				Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				mVibrator.vibrate(300);
+			}
+		});
+	}
+
+	private void displayLicensePlateToast(final String text) {
+		final String textFormatted = text.replaceAll("\\s+","");
+
+		if(textFormatted.isEmpty())
+			return;
+
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+				LayoutInflater inflater = getLayoutInflater();
+				View layout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+
+				TextView numberPlateText = (TextView) layout.findViewById(R.id.number_plate);
+				numberPlateText.setText(textFormatted);
+
+				Toast toast = new Toast(getApplicationContext());
+				toast.setGravity(Gravity.BOTTOM, 0, 100);
 				toast.setDuration(Toast.LENGTH_SHORT);
 				toast.setView(layout);
 				toast.show();
@@ -441,7 +485,7 @@ public class ConnectionActivity extends AppCompatActivity {
                                 break;
                             case 7:
                                 try {
-                                    displayLicensePlateToast(new String(data, "UTF-8"));
+                                    displayLicensePlateToast(data);
                                 } catch (Exception e) {
                                     displayLicensePlateToast("ERROR!");
                                 }
