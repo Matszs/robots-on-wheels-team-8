@@ -92,6 +92,15 @@ void onCommand(uint8_t opcode, char *commandData) {
 	} else if(opcode == 8) {
 	    automaticStop = (uint8_t)(commandData[0]);
 	    printf("stop: %d", automaticStop);
+	} else if(opcode == 9) {
+	    //system("cd /home/pi/cam && fswebcam -r 1920x1080 -S 20 --no-banner --quiet alpr.jpg && tesseract -psm 7 alpr.jpg stdout");
+
+	    FILE *ls = popen("cd /home/pi/cam && fswebcam -r 1920x1080 -S 20 --no-banner --quiet alpr.jpg && tesseract -psm 7 alpr.jpg stdout", "r");
+        char buf[256];
+        while (fgets(buf, sizeof(buf), ls) != 0) {
+            printf("%s", buf);
+        }
+        pclose(ls);
 	}
 	// TODO: add engine ...
 }
