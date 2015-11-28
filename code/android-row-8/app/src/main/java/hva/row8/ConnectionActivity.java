@@ -61,6 +61,8 @@ public class ConnectionActivity extends AppCompatActivity {
 	SocketClient socketConnection;
 	private boolean mVisible;
 	private TextView status;
+	private Button licensePlateButton;
+
 	private RelativeLayout wallHitHolder;
     private boolean isActive = false;
 
@@ -123,7 +125,7 @@ public class ConnectionActivity extends AppCompatActivity {
 			}
 		});
 
-		Button licensePlateButton = (Button)findViewById(R.id.read_license_plate);
+		licensePlateButton = (Button)findViewById(R.id.read_license_plate);
 		licensePlateButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -315,6 +317,7 @@ public class ConnectionActivity extends AppCompatActivity {
 		}*/
 		status.setVisibility(View.GONE);
 		wallHitHolder.setVisibility(View.GONE);
+		licensePlateButton.setVisibility(View.GONE);
 		mVisible = false;
 
 		// Schedule a runnable to remove the status and navigation bar after a delay
@@ -366,6 +369,9 @@ public class ConnectionActivity extends AppCompatActivity {
 			if (actionBar != null) {
 				actionBar.show();
 			}*/
+
+
+			licensePlateButton.setVisibility(View.VISIBLE);
 
 			ViewGroup.MarginLayoutParams statusLayoutParams = (ViewGroup.MarginLayoutParams) status.getLayoutParams();
 			//statusLayoutParams.setMargins(0, 0, getSoftbuttonsbarHeight() + 100, 0); // llp.setMargins(left, top, right, bottom);

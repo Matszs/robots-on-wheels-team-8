@@ -53,10 +53,7 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
     uint8_t richtingRechts = (rotationDirectionRight == 1) ? 1 : 2;
     uint8_t MotorC[7];
 
-    if(automaticStop && hasToStop && (richtingLinks == 2 || richtingRechts == 2)) {
-        printf("No forward");
-        isDriving = 0;
-    } else {
+
         // No speed, no direction so stop moving.
         if(richtingLinks == 2 && rotationSpeedLeft == 0 && richtingRechts == 2 && rotationSpeedRight == 0) {
             if(DEBUG)
@@ -70,17 +67,22 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
             MotorC[6] = 0;
             isDriving = 0;
         } else {
-            if(DEBUG)
-                printf("lft; %d, rgh; %d\n", speedTable[rotationSpeedLeft], speedTable[rotationSpeedRight]);
+            if(automaticStop && hasToStop && (richtingLinks == 2 || richtingRechts == 2)) {
+                printf("No forward");
+                isDriving = 0;
+            } else {
+                if(DEBUG)
+                    printf("lft; %d, rgh; %d\n", speedTable[rotationSpeedLeft], speedTable[rotationSpeedRight]);
 
-            MotorC[0] = 7;
-            MotorC[1] = 3;
-            MotorC[2] = speedTable[rotationSpeedLeft];
-            MotorC[3] = (rotationSpeedLeft == 0 ? 0 : richtingLinks);
-            MotorC[4] = 3;
-            MotorC[5] = speedTable[rotationSpeedRight];
-            MotorC[6] = (rotationSpeedRight == 0 ? 0 : richtingRechts);
-            isDriving = 1;
+                MotorC[0] = 7;
+                MotorC[1] = 3;
+                MotorC[2] = speedTable[rotationSpeedLeft];
+                MotorC[3] = (rotationSpeedLeft == 0 ? 0 : richtingLinks);
+                MotorC[4] = 3;
+                MotorC[5] = speedTable[rotationSpeedRight];
+                MotorC[6] = (rotationSpeedRight == 0 ? 0 : richtingRechts);
+                isDriving = 1;
+            }
         }
         printf("writeData\n");
         writeData(&MotorC[0], 7);
