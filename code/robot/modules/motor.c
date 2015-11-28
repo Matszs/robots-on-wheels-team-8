@@ -67,7 +67,7 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
         isDriving = 0;
     } else {
         if(automaticStop && hasToStop && (richtingLinks == 2 || richtingRechts == 2)) {
-            printf("No forward");
+            printf("No forward\n");
             isDriving = 0;
         } else {
             if(DEBUG)
