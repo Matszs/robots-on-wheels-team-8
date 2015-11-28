@@ -8,7 +8,7 @@
 // sudo gcc -o project project.c -L/usr/local/lib  -lwiringPi -lwiringPiDev -lpthread -lm -lrpigpio
 
 #define PORT_NUMBER		1212
-#define DEBUG			1
+#define DEBUG			0
 
 #define OPT_DEFAULT		0
 #define OPT_MOTOR		1
