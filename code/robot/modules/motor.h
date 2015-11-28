@@ -23,5 +23,7 @@ void unpackMovement(uint8_t getal, movement *direction);
 
 void MotorControl(movement *direction, void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t));
 
+void MotorInit();
+
 
 #endif /* defined(__Robot__control__) */
