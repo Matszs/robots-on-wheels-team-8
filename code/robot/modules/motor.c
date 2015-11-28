@@ -11,6 +11,10 @@
 
 #include "motor.h"
 int motor;
+int lastSpeedLeft = -1;
+int lastSpeedRight = -1;
+int lastDirectionLeft = -1;
+int lastDirectionRight = -1;
 
 void writeData(uint8_t * data, int lenght){
     int i;
@@ -65,8 +69,12 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
         MotorC[5] = 0;
         MotorC[6] = 0;
         isDriving = 0;
+
+        printf("Engine: STOP \n");
+        writeData(&MotorC[0], 7);
     } else {
         printf("STOP: %d \n", hasToStop);
+
         if(automaticStop && hasToStop && (richtingLinks == 2 || richtingRechts == 2)) {
             printf("No forward\n");
             if(isDriving == 1)
@@ -74,20 +82,24 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
             isDriving = 0;
         } else {
             //if(DEBUG)
+            if(lastSpeedLeft != speedTable[rotationSpeedLeft] || lastSpeedRight != speedTable[rotationSpeedRight] || lastDirectionLeft != (rotationSpeedLeft == 0 ? 0 : richtingLinks) || lastDirectionRight != (rotationSpeedRight == 0 ? 0 : richtingRechts)) {
+
                 printf("lft; %d, rgh; %d\n", speedTable[rotationSpeedLeft], speedTable[rotationSpeedRight]);
 
-            MotorC[0] = 7;
-            MotorC[1] = 3;
-            MotorC[2] = speedTable[rotationSpeedLeft];
-            MotorC[3] = (rotationSpeedLeft == 0 ? 0 : richtingLinks);
-            MotorC[4] = 3;
-            MotorC[5] = speedTable[rotationSpeedRight];
-            MotorC[6] = (rotationSpeedRight == 0 ? 0 : richtingRechts);
-            isDriving = 1;
+                MotorC[0] = 7;
+                MotorC[1] = 3;
+                MotorC[2] = lastSpeedLeft = speedTable[rotationSpeedLeft];
+                MotorC[3] = lastDirectionLeft = (rotationSpeedLeft == 0 ? 0 : richtingLinks);
+                MotorC[4] = 3;
+                MotorC[5] = lastSpeedRight = speedTable[rotationSpeedRight];
+                MotorC[6] = lastDirectionRight = (rotationSpeedRight == 0 ? 0 : richtingRechts);
+                isDriving = 1;
+
+                printf("Engine: riding \n");
+                writeData(&MotorC[0], 7);
+            }
         }
     }
-    printf("writeData\n");
-    writeData(&MotorC[0], 7);
 }
 
 void MotorInit() {
