@@ -66,10 +66,11 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
         MotorC[6] = 0;
         isDriving = 0;
     } else {
+        printf("STOP: %d \n", hasToStop);
         if(automaticStop && hasToStop && (richtingLinks == 2 || richtingRechts == 2)) {
             printf("No forward\n");
             if(isDriving == 1)
-                MotorInit();
+                MotorInit(); // reset engine because sometimes it crashes????
             isDriving = 0;
         } else {
             //if(DEBUG)
