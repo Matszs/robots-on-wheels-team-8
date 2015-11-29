@@ -200,7 +200,7 @@ public class ConnectionActivity extends AppCompatActivity {
 
                 Toast toast = new Toast(getApplicationContext());
                 toast.setGravity(Gravity.BOTTOM, 0, 100);
-				toast.setDuration(Toast.LENGTH_SHORT);
+				toast.setDuration(Toast.LENGTH_LONG);
 				toast.setView(layout);
 				toast.show();
 
