@@ -481,7 +481,12 @@ public class ConnectionActivity extends AppCompatActivity {
                 @Override
                 public void onDataReceive(int module, byte[] data) {
                     try {
-                        writeStatus("Connected");
+						new Handler(Looper.getMainLooper()).post(new Runnable() {
+							@Override
+							public void run() {
+								writeStatus("Connected");
+							}
+						});
                         //System.out.println("Module: " + module);
                         //System.out.println("Data: " + new String(data, "UTF-8"));
                         switch (module) {
