@@ -94,16 +94,7 @@ void onCommand(uint8_t opcode, char *commandData) {
 	    automaticStop = (uint8_t)(commandData[0]);
 	    printf("stop: %d", automaticStop);
 	} else if(opcode == OPT_LICENSE) {
-	    //system("cd /home/pi/cam && fswebcam -r 1920x1080 -S 20 --no-banner --quiet alpr.jpg && tesseract -psm 7 alpr.jpg stdout");
-
-	    FILE *ls = popen("cd /home/pi/cam && wget http://localhost:8080?action=snapshot -O alpr.jpg > /dev/null 2>&1 && tesseract -psm 7 alpr.jpg stdout", "r");
-        char buf[100];
-        while (fgets(buf, sizeof(buf), ls) != 0) {
-            printf("%s", buf);
-            writeToSocket(OPT_LICENSE, &buf[0]);
-        }
-
-        pclose(ls);
+		licensePlateReader();
 	}
 	// TODO: add engine ...
 }
