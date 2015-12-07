@@ -3,7 +3,8 @@
 			 android:layout_width="match_parent"
 			 android:layout_height="match_parent"
 			 android:background="#0099cc"
-			 tools:context="hva.row8.ConnectionActivity">
+			 tools:context="hva.row8.ConnectionActivity"
+			 android:id="@+id/connection_holder">
 
 	<RelativeLayout
 		android:layout_width="match_parent"
@@ -15,8 +16,24 @@
 			android:id="@+id/video_view"
 			android:layout_alignParentTop="true"
 			android:layout_alignParentLeft="true"
-			android:layout_alignParentStart="true"
-			android:background="#fc0398"/>
+			android:layout_alignParentStart="true"/>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/video_overlay"
+		android:background="#9363d9dd">
+
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="Robots on Wheels - Team 8"
+			android:layout_centerVertical="true"
+			android:layout_centerHorizontal="true"
+			android:textColor="#9363d9aa"/>
 	</RelativeLayout>
 
 	<RelativeLayout
@@ -69,7 +86,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="100"
+				android:text="0"
 				android:id="@+id/speed_field"
 				android:layout_alignParentTop="true"
 				android:layout_alignParentLeft="true"
@@ -92,11 +109,22 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:text="veel"
+				android:text="-"
 				android:id="@+id/distance_field"
 				android:layout_below="@+id/speed_field"
 				android:layout_centerHorizontal="true"/>
 		</RelativeLayout>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="Not connected"
+			android:id="@+id/status"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			android:textColor="#fff"/>
 
 	</RelativeLayout>
 

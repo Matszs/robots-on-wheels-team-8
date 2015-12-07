@@ -34,6 +34,13 @@ void socketInit() {
     int yes = 1;
     if ( setsockopt(socketConnection, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 )
         printf("Error so_reusaddr");
+	
+	struct timeval timeout;
+	timeout.tv_sec = 1;
+	timeout.tv_usec = 0;
+	
+	if (setsockopt (socketConnection, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+		error("setsockopt failed\n");
 
     //Bind
     if( bind(socketConnection,(struct sockaddr *)&server , sizeof(server)) == -1)
@@ -146,6 +153,11 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 
         int writeSocket = write(userSocket, client_message, 1025);
 		if (writeSocket == -1 ) {
+			close(socketConnection);
+			close(userSocket);
+
+			userSocket = -1;
+			socketInit();
 			onDisconnect();
 		}
 	}

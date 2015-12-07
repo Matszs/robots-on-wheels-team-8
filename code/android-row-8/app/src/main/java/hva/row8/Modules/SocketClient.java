@@ -3,6 +3,7 @@ package hva.row8.Modules;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,29 +20,43 @@ public class SocketClient {
 	DataOutputStream outputStream;
 	Socket socket;
 	private List<DataReceiveListener> listeners = new ArrayList<DataReceiveListener>();
+    byte[] buffer = new byte[1025];
+    InetSocketAddress socketAddress = null;
 
 	public SocketClient(String url, int port) {
 		this.url = url;
 		this.port = port;
 	}
+
 	public SocketClient(String url) {
 		this.url = url;
 		this.port = 1212;
 	}
+
 	public SocketClient() {
 		this.url = "pi.akoo.nl";
 		this.port = 1212;
 	}
-	public void setUp() {
+
+    public void setUp() {
+        setUp(false);
+    }
+
+	public void setUp(boolean reConnect) {
+        Thread readThread;
 		try
 		{
-			this.socket = new Socket(this.url, this.port);
-			final InputStream is = this.socket.getInputStream();
+            if(socketAddress == null)
+                socketAddress = new InetSocketAddress(this.url, this.port);
+			//this.socket = new Socket(this.url, this.port);
+			this.socket = new Socket();
+			this.socket.connect(socketAddress, 3000);
+            final InputStream is = this.socket.getInputStream();
 			this.outputStream = new DataOutputStream(this.socket.getOutputStream());
 
-			Thread readThread = new Thread(){
+			readThread = new Thread(){
 				public void run(){
-					byte[] buffer = new byte[1025];
+					buffer = new byte[1025];
 					int length = 0;
 					try {
 						while((length = is.read(buffer)) > 0) {
@@ -62,13 +77,13 @@ public class SocketClient {
 			};
 
 			readThread.start();
-		}catch(IOException e) {
-			for(DataReceiveListener dataReceiveListener : listeners)
-				dataReceiveListener.onConnectionDrop();
+		}catch(Exception e) {
+            for(DataReceiveListener dataReceiveListener : listeners)
+                dataReceiveListener.onConnectionDrop();
 
 			e.printStackTrace();
 		}
-	}
+    }
 	public void stop() throws IOException {
 		this.socket.close();
 	}
@@ -83,19 +98,25 @@ public class SocketClient {
 		this.outputStream.flush();
 	}
 
+	public void reconnect() {
+		reconnect(0);
+	}
+
 	public void reconnect(int amount) {
-		if(amount <= 0)
-			return;
 
 		try {
-			setUp();
+			if(this.socket != null) {
+                this.socket.close();
+                this.socket = null;
+            }
+			setUp(true);
 		} catch (Exception e) {
 			try{
-				Thread.sleep(1000);
+				Thread.sleep(10000);
 			} catch (Exception te) {
 				System.out.println("Cannot sleep thread.");
 			} finally {
-				reconnect(amount - 1);
+				reconnect(++amount);
 			}
 		}
 	}

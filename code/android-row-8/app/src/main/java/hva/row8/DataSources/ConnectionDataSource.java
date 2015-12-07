@@ -48,6 +48,23 @@ public class ConnectionDataSource {
 		database.insert("connections", null, values);
 	}
 
+	public void addConnection(String ip, String port, String name, boolean reconnect) {
+		ContentValues values = new ContentValues();
+
+		int id = 1;
+		Cursor existingConnection = database.query("connections", new String[] { "id" }, "", new String[] {}, "", "", "id DESC");
+		if(existingConnection.moveToFirst())
+			id = (existingConnection.getInt(0)) + 1;
+
+		values.put("id", id);
+		values.put("ip", ip);
+		values.put("port", port);
+		values.put("name", name);
+		values.put("reconnect", (reconnect ? 1 : 0));
+
+		database.insert("connections", null, values);
+	}
+
 	public void editConnection(int id, String ip, String port, String name) {
 		ContentValues values = new ContentValues();
 		values.put("id", id);
@@ -58,14 +75,25 @@ public class ConnectionDataSource {
 		database.update("connections", values, "id=?", new String[]{String.valueOf(id)});
 	}
 
+	public void editConnection(int id, String ip, String port, String name, boolean reconnect) {
+		ContentValues values = new ContentValues();
+		values.put("id", id);
+		values.put("ip", ip);
+		values.put("port", port);
+		values.put("name", name);
+		values.put("reconnect", (reconnect ? 1 : 0));
+
+		database.update("connections", values, "id=?", new String[]{String.valueOf(id)});
+	}
+
 	public void deleteConnection(int id) {
 		database.delete("connections", "id=?", new String[]{String.valueOf(id)});
 	}
 
 	public Connection getConnection(int id) {
-		Cursor connectionCursor = database.query("connections", new String[]{"id", "name", "ip", "port"}, "id = ?", new String[]{ String.valueOf(id) }, null, null, null);
+		Cursor connectionCursor = database.query("connections", new String[]{"id", "name", "ip", "port", "reconnect"}, "id = ?", new String[]{ String.valueOf(id) }, null, null, null);
 		if(connectionCursor.moveToFirst())
-			return new Connection(connectionCursor.getInt(0), connectionCursor.getString(1), connectionCursor.getString(2), connectionCursor.getString(3));
+			return new Connection(connectionCursor.getInt(0), connectionCursor.getString(1), connectionCursor.getString(2), connectionCursor.getString(3), (connectionCursor.getInt(4) == 1));
 		return null;
 	}
 
@@ -76,7 +104,7 @@ public class ConnectionDataSource {
 
 		if (cursor.moveToFirst()) {
 			do {
-				connections.add(new Connection(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3)));
+				connections.add(new Connection(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), (cursor.getInt(4) == 1)));
 			} while (cursor.moveToNext());
 		}
 
