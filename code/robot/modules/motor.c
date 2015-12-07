@@ -47,6 +47,11 @@ void MotorInit() {
 	writeData(&Softstart[0], 3);
 	pinMode(ledLeftPin, OUTPUT);
 	pinMode(ledRightPin, OUTPUT);
+	ledRightState = 0;
+	digitalWrite(ledRightPin, ledRightState);
+	ledLeftState = 0;
+	digitalWrite(ledLeftPin, ledLeftState);
+
 }
 
 void unpackMovement(uint8_t input, movement *direction){
