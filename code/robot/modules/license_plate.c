@@ -76,8 +76,8 @@ sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
 
         MYSQL_ROW row;
                  while ((row = mysql_fetch_row(result)))
-                {  
-                for(int i = 0; i < num_fields; i++)
+                { int i; 
+                for(i = 0; i < num_fields; i++)
                 {
                      printf("%s ", row[i] ? row[i] : "NULL");
                  }
