@@ -54,20 +54,18 @@ void check_database(char license[100]) {
         exit(1);
     }
 
-	if (mysql_real_connect(con, "oege.ie.hva.nl", "peerdes001", "UXJPpVCuRfz.e/", "zpeerdes001", 0, NULL, 0) == NULL) {
+	if (mysql_real_connect(con, "akoo.nl", "row", "row", "row", 0, NULL, 0) == NULL) {
 	  finish_with_error(con);
 	}
 
 	if (mysql_query(con, query)) {
 		printf("Query failed: %s\n", mysql_error(con));
 	} else {
-		printf("Debug1\n");
 		MYSQL_RES *result = mysql_store_result(con);
 
 		if (!result) {
 			printf("Couldn't get results set: %s\n", mysql_error(con));
 		}
-		printf("Debug2\n");
 
 		int num_fields = mysql_num_fields(result);
 
@@ -79,7 +77,6 @@ void check_database(char license[100]) {
 			}
 			printf("\n");
 		}
-		printf("Debug3\n");
 	}
 
 	mysql_close(con);
