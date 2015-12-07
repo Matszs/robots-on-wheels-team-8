@@ -29,7 +29,10 @@ void *wallStopHandler(void *arg) {
                         wallStop[0] = 1;
                         writeToSocket(OPT_VIBRATE, &wallStop[0]);
 
-                        MotorcontrolMovement(0, 0, 0, 0); // stop driving
+						movement direction;
+						
+						unpackMovement((uint8_t)0, &direction);
+						MotorcontrolMovement(&direction);
                     }
                     hasToStop = 1;
                 }

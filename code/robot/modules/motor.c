@@ -9,17 +9,40 @@
 //  Edited by Mats Otten on 22-09-15.
 //
 
-#include "motor.h"
 int motor;
 int lastSpeedLeft = -1;
 int lastSpeedRight = -1;
 int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
+uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
+int ledLeftPin = 10;
+int ledRightPin = 11;
+
+typedef struct {
+	uint8_t Left:4;
+	uint8_t Right:4;
+} movement;
 
 void writeData(uint8_t * data, int lenght){
-    int i;
+	int i;
 	for (i = 0; i < lenght; i++)
 		wiringPiI2CWrite(motor, data[i]);
+}
+
+void MotorInit() {
+	uint8_t Totalpower[2]={4,250};
+	uint8_t Softstart[3]={0x91,23,0};
+	motor = wiringPiI2CSetup(0x32);
+	wiringPiSetup();
+	if (motor < 0)
+		printf("wiringPiI2CSetup failed.\n");
+	writeData(&Totalpower[0], 2);
+	writeData(&Softstart[0], 3);
+	pinMode(ledLeftPin, OUTPUT);
+	pinMode(ledRightPin, OUTPUT);
+	digitalWrite(ledRightPin, 0);
+	digitalWrite(ledLeftPin, 0);
+
 }
 
 void unpackMovement(uint8_t input, movement *direction){
@@ -27,34 +50,23 @@ void unpackMovement(uint8_t input, movement *direction){
     direction->Right = (input << 4) >> 4;
 }
 
-void MotorControl(movement *direction, void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t)){
-   // 0000 (links)  		0000 (rechts)
-   // ^ richting			^ richting
-   //  ^^^ snelheid			 ^^^ snelheid
-
-   // 0001 0001
-
-    uint8_t rotationDirectionLeft = direction->Left >> 3 & 1;
-    uint8_t rotationDirectionRight = direction->Right >> 3 & 1;
-    uint8_t rotationSpeedLeft = direction->Left & 7;
-    uint8_t rotationSpeedRight = direction->Right & 7;
-
+void MotorcontrolMovement(movement *direction){
+	
+	uint8_t richtingLinks = ((direction->Left >> 3 & 1) == 1) ? 1 : 2;
+	uint8_t richtingRechts = ((direction->Right >> 3 & 1) == 1) ? 1 : 2;
+	uint8_t rotationSpeedLeft = direction->Left & 7;
+	uint8_t rotationSpeedRight = direction->Right & 7;
+	
 	if(DEBUG) {
 		printf("direction->Left:        %d\n", direction->Left);
 		printf("direction->Right:       %d\n", direction->Right);
-		printf("rotationDirectionLeft:  %d\n", rotationDirectionLeft);
-		printf("rotationDirectionRight: %d\n", rotationDirectionRight);
+		printf("rotationDirectionLeft:  %d\n", richtingLinks);
+		printf("rotationDirectionRight: %d\n", richtingRechts);
 		printf("rotationSpeedLeft:      %d\n", rotationSpeedLeft);
 		printf("rotationSpeedRight:     %d\n\n", rotationSpeedRight);
-    }
+	}
+	
 
-    motorCallback(rotationDirectionLeft, rotationSpeedLeft, rotationDirectionRight, rotationSpeedRight);
-}
-
-void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLeft, uint8_t rotationDirectionRight, uint8_t rotationSpeedRight){
-
-    uint8_t richtingLinks = (rotationDirectionLeft == 1) ? 1 : 2;
-    uint8_t richtingRechts = (rotationDirectionRight == 1) ? 1 : 2;
     uint8_t MotorC[7];
 
     // No speed, no direction so stop moving.
@@ -72,6 +84,9 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
 
         printf("Engine: STOP \n");
         writeData(&MotorC[0], 7);
+		digitalWrite(ledRightPin, 0);
+		digitalWrite(ledLeftPin, 0);
+
     } else {
         printf("STOP: %d \n", hasToStop);
 
@@ -94,7 +109,22 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
                 MotorC[5] = lastSpeedRight = speedTable[rotationSpeedRight];
                 MotorC[6] = lastDirectionRight = (rotationSpeedRight == 0 ? 0 : richtingRechts);
                 isDriving = 1;
+				printf(" left: %d, right: %d \n", lastSpeedLeft, lastSpeedRight);
 
+				if(lastSpeedLeft > lastSpeedRight){
+					printf("right");
+					digitalWrite(ledLeftPin, 1);
+					digitalWrite(ledRightPin, 0);
+				}else if(lastSpeedLeft < lastSpeedRight){
+					printf("left");
+					digitalWrite(ledRightPin, 1);
+					digitalWrite(ledLeftPin, 0);
+
+				}else{
+					digitalWrite(ledRightPin, 0);
+					digitalWrite(ledLeftPin, 0);
+
+				}
                 printf("Engine: riding \n");
                 writeData(&MotorC[0], 7);
             }
@@ -102,12 +132,3 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
     }
 }
 
-void MotorInit() {
-	uint8_t Totalpower[2]={4,250};
-	uint8_t Softstart[3]={0x91,23,0};
-	motor = wiringPiI2CSetup(0x32);
-	if (motor < 0)
-		printf("wiringPiI2CSetup failed.\n");
-	writeData(&Totalpower[0], 2);
-	writeData(&Softstart[0], 3);
-}
