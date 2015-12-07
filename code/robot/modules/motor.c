@@ -29,18 +29,6 @@ void writeData(uint8_t * data, int lenght){
 		wiringPiI2CWrite(motor, data[i]);
 }
 
-//void toggleLed(int pin, int * state){
-//	if(count < 10){
-//		count++;
-//	}else if (count >= 10){
-//		*state = *state == 0 ? 1 : 0;
-//		count = 0;
-//	}
-//
-//	digitalWrite(pin, *state);
-//}
-
-
 void MotorInit() {
 	uint8_t Totalpower[2]={4,250};
 	uint8_t Softstart[3]={0x91,23,0};
@@ -121,6 +109,7 @@ void MotorcontrolMovement(movement *direction){
                 MotorC[5] = lastSpeedRight = speedTable[rotationSpeedRight];
                 MotorC[6] = lastDirectionRight = (rotationSpeedRight == 0 ? 0 : richtingRechts);
                 isDriving = 1;
+				printf(" left: %d, right: %d \n", lastSpeedLeft, lastSpeedRight);
 
 				if(lastSpeedLeft > lastSpeedRight){
 					printf("right");
@@ -132,10 +121,8 @@ void MotorcontrolMovement(movement *direction){
 					digitalWrite(ledLeftPin, 1);
 
 				}else{
-					ledRightState = 0;
-					digitalWrite(ledRightPin, ledRightState);
-					ledLeftState = 0;
-					digitalWrite(ledLeftPin, ledLeftState);
+					digitalWrite(ledRightPin, 0);
+					digitalWrite(ledLeftPin, 0);
 
 				}
                 printf("Engine: riding \n");
