@@ -15,6 +15,13 @@ int lastSpeedLeft = -1;
 int lastSpeedRight = -1;
 int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
+uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
+
+typedef struct {
+	uint8_t Left:4;
+	uint8_t Right:4;
+} movement;
+
 
 void writeData(uint8_t * data, int lenght){
     int i;
