@@ -19,7 +19,7 @@ int ledLeftPin = 10;
 int ledRightPin = 11;
 int ledLeftState = 0;
 int ledRightState = 0;
-
+int count;
 typedef struct {
 	uint8_t Left:4;
 	uint8_t Right:4;
@@ -32,7 +32,13 @@ void writeData(uint8_t * data, int lenght){
 }
 
 void toggleLed(int pin, int * state){
-	*state = *state == 0 ? 1 : 0;
+	if(count < 10){
+		count++;
+	}else if (count >= 10){
+		*state = *state == 0 ? 1 : 0;
+		count = 0;
+	}
+
 	digitalWrite(pin, *state);
 }
 
