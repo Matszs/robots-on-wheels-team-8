@@ -37,55 +37,50 @@ void *licensePlateHandler(void *arg) {
 }
 
 
-void finish_with_error(MYSQL *con)
-{
+void finish_with_error(MYSQL *con) {
   fprintf(stderr, "%s\n", mysql_error(con));
   mysql_close(con);
   exit(1);
 }
 
-void check_database(char license[100])
-{
-char query[300];
+void check_database(char license[100]) {
+    char query[300];
 
-sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
-  MYSQL *con = mysql_init(NULL);
+    sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
+    MYSQL *con = mysql_init(NULL);
 
-  if (con == NULL)
-  {
-      fprintf(stderr, "%s\n", mysql_error(con));
-      exit(1);
-  }
+    if (con == NULL) {
+        fprintf(stderr, "%s\n", mysql_error(con));
+        exit(1);
+    }
 
-  if (mysql_real_connect(con, "oege.ie.hva.nl", "peerdes001", "UXJPpVCuRfz.e/",
-          "zpeerdes001", 0, NULL, 0) == NULL)
-  {
-      finish_with_error(con);
-  }
+	if (mysql_real_connect(con, "oege.ie.hva.nl", "peerdes001", "UXJPpVCuRfz.e/", "zpeerdes001", 0, NULL, 0) == NULL) {
+	  finish_with_error(con);
+	}
 
-    if (mysql_query(con, query )) {
-      printf("Query failed: %s\n", mysql_error(con));
-    } else {
-      MYSQL_RES *result = mysql_store_result(con);
+	if (mysql_query(con, query)) {
+		printf("Query failed: %s\n", mysql_error(con));
+	} else {
+		printf("Debug1\n");
+		MYSQL_RES *result = mysql_store_result(con);
 
-      if (!result) {
-        printf("Couldn't get results set: %s\n", mysql_error(con));
-     }
+		if (!result) {
+			printf("Couldn't get results set: %s\n", mysql_error(con));
+		}
+		printf("Debug2\n");
 
-         int num_fields = mysql_num_fields(result);
+		int num_fields = mysql_num_fields(result);
 
-        MYSQL_ROW row;
-                 while ((row = mysql_fetch_row(result)))
-                {  
-                for(int i = 0; i < num_fields; i++)
-                {
-                     printf("%s ", row[i] ? row[i] : "NULL");
-                 }
-                         printf("\n");
-  }
-}
+		MYSQL_ROW row;
+		while ((row = mysql_fetch_row(result))) {
+			for(int i = 0; i < num_fields; i++) {
+				printf("%s ", row[i] ? row[i] : "NULL");
+			}
+			printf("\n");
+		}
+		printf("Debug3\n");
+	}
 
-  mysql_close(con);
-
-  return EXIT_SUCCESS;
+	mysql_close(con);
+	return EXIT_SUCCESS;
 }
