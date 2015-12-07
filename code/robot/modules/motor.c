@@ -9,7 +9,6 @@
 //  Edited by Mats Otten on 22-09-15.
 //
 
-#include "motor.h"
 int motor;
 int lastSpeedLeft = -1;
 int lastSpeedRight = -1;
