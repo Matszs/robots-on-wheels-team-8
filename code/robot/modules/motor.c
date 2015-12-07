@@ -15,6 +15,10 @@ int lastSpeedRight = -1;
 int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
 uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
+char ledLeftPin = 10;
+char ledRightPin = 11;
+char ledLeftState = 0;
+char ledRightState = 0;
 
 typedef struct {
 	uint8_t Left:4;
@@ -27,6 +31,12 @@ void writeData(uint8_t * data, int lenght){
 		wiringPiI2CWrite(motor, data[i]);
 }
 
+void toggleLed(int pin, int * state){
+	*state = *state == 0 ? 1 : 0;
+	digitalWrite(pin, *state);
+}
+
+
 void MotorInit() {
 	uint8_t Totalpower[2]={4,250};
 	uint8_t Softstart[3]={0x91,23,0};
@@ -35,6 +45,8 @@ void MotorInit() {
 		printf("wiringPiI2CSetup failed.\n");
 	writeData(&Totalpower[0], 2);
 	writeData(&Softstart[0], 3);
+	pinMode(ledLeftPin, OUTPUT);
+	pinMode(ledRightPin, OUTPUT);
 }
 
 void unpackMovement(uint8_t input, movement *direction){
@@ -76,6 +88,11 @@ void MotorcontrolMovement(movement *direction){
 
         printf("Engine: STOP \n");
         writeData(&MotorC[0], 7);
+		ledRightState = 0;
+		digitalWrite(ledRightPin, ledRightState);
+		ledLeftState = 0;
+		digitalWrite(ledLeftPin, ledLeftState);
+
     } else {
         printf("STOP: %d \n", hasToStop);
 
@@ -99,6 +116,24 @@ void MotorcontrolMovement(movement *direction){
                 MotorC[6] = lastDirectionRight = (rotationSpeedRight == 0 ? 0 : richtingRechts);
                 isDriving = 1;
 
+				if(lastSpeedLeft > lastSpeedRight){
+					printf("right");
+					ledLeftState = 0;
+					digitalWrite(ledLeftPin, ledLeftState);
+					toggleLed(ledRightPin, &ledRightState);
+				}else if(lastSpeedLeft < lastSpeedRight){
+					printf("left");
+					ledRightState = 0;
+					digitalWrite(ledRightPin, ledRightState);
+					toggleLed(ledLeftPin, &ledLeftState);
+
+				}else{
+					ledRightState = 0;
+					digitalWrite(ledRightPin, ledRightState);
+					ledLeftState = 0;
+					digitalWrite(ledLeftPin, ledLeftState);
+
+				}
                 printf("Engine: riding \n");
                 writeData(&MotorC[0], 7);
             }
