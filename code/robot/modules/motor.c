@@ -41,6 +41,7 @@ void MotorInit() {
 	uint8_t Totalpower[2]={4,250};
 	uint8_t Softstart[3]={0x91,23,0};
 	motor = wiringPiI2CSetup(0x32);
+	wiringPiSetup();
 	if (motor < 0)
 		printf("wiringPiI2CSetup failed.\n");
 	writeData(&Totalpower[0], 2);
