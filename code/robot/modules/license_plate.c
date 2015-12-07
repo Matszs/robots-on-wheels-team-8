@@ -87,5 +87,4 @@ sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
 
   mysql_close(con);
 
-  return EXIT_SUCCESS;
 }
