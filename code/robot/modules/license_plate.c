@@ -38,56 +38,13 @@ void *licensePlateHandler(void *arg) {
 
 
 void finish_with_error(MYSQL *con) {
-  fprintf(stderr, "%s\n", mysql_error(con));
-  mysql_close(con);
-  exit(1);
+	fprintf(stderr, "%s\n", mysql_error(con));
+	mysql_close(con);
+	exit(1);
 }
 
-<<<<<<< HEAD
 void check_database(char license[100]) {
     char query[300];
-=======
-void check_database(char license[100])
-{
-char query[300];
-
-sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
-  MYSQL *con = mysql_init(NULL);
-
-  if (con == NULL)
-  {
-      fprintf(stderr, "%s\n", mysql_error(con));
-      exit(1);
-  }
-
-  if (mysql_real_connect(con, "oege.ie.hva.nl", "peerdes001", "UXJPpVCuRfz.e/",
-          "zpeerdes001", 0, NULL, 0) == NULL)
-  {
-      finish_with_error(con);
-  }
-
-    if (mysql_query(con, query )) {
-      printf("Query failed: %s\n", mysql_error(con));
-    } else {
-      MYSQL_RES *result = mysql_store_result(con);
-
-      if (!result) {
-        printf("Couldn't get results set: %s\n", mysql_error(con));
-     }
-
-         int num_fields = mysql_num_fields(result);
-
-        MYSQL_ROW row;
-                 while ((row = mysql_fetch_row(result)))
-                { int i; 
-                for(i = 0; i < num_fields; i++)
-                {
-                     printf("%s ", row[i] ? row[i] : "NULL");
-                 }
-                         printf("\n");
-  }
-}
->>>>>>> 0da09268e414ae2ca42752c52d05db481e97ff5d
 
     sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
     MYSQL *con = mysql_init(NULL);
@@ -124,9 +81,6 @@ sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
 		printf("Debug3\n");
 	}
 
-<<<<<<< HEAD
 	mysql_close(con);
 	return EXIT_SUCCESS;
-=======
->>>>>>> 0da09268e414ae2ca42752c52d05db481e97ff5d
 }
