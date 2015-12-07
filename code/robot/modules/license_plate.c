@@ -46,7 +46,7 @@ void finish_with_error(MYSQL *con) {
 void check_database(char license[100]) {
     char query[300];
 
-    sprintf(query,"SELECT Fine FROM Cars WHERE License = ('%s')",license);
+    sprintf(query,"SELECT fine FROM cars WHERE license = ('%s')",license);
     MYSQL *con = mysql_init(NULL);
 
     if (con == NULL) {
@@ -54,7 +54,7 @@ void check_database(char license[100]) {
         exit(1);
     }
 
-	if (mysql_real_connect(con, "akoo.nl", "row", "row", "row", 0, NULL, 0) == NULL) {
+	if (mysql_real_connect(con, "akoo.nl", "peerdes001", "UXJPpVCuRfz.e/", "zpeerdes001", 0, NULL, 0) == NULL) {
 	  finish_with_error(con);
 	}
 
