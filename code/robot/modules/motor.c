@@ -17,9 +17,7 @@ int lastDirectionRight = -1;
 uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
 int ledLeftPin = 10;
 int ledRightPin = 11;
-int ledLeftState = 0;
-int ledRightState = 0;
-int count;
+
 typedef struct {
 	uint8_t Left:4;
 	uint8_t Right:4;
@@ -31,16 +29,16 @@ void writeData(uint8_t * data, int lenght){
 		wiringPiI2CWrite(motor, data[i]);
 }
 
-void toggleLed(int pin, int * state){
-	if(count < 10){
-		count++;
-	}else if (count >= 10){
-		*state = *state == 0 ? 1 : 0;
-		count = 0;
-	}
-
-	digitalWrite(pin, *state);
-}
+//void toggleLed(int pin, int * state){
+//	if(count < 10){
+//		count++;
+//	}else if (count >= 10){
+//		*state = *state == 0 ? 1 : 0;
+//		count = 0;
+//	}
+//
+//	digitalWrite(pin, *state);
+//}
 
 
 void MotorInit() {
@@ -54,10 +52,8 @@ void MotorInit() {
 	writeData(&Softstart[0], 3);
 	pinMode(ledLeftPin, OUTPUT);
 	pinMode(ledRightPin, OUTPUT);
-	ledRightState = 0;
-	digitalWrite(ledRightPin, ledRightState);
-	ledLeftState = 0;
-	digitalWrite(ledLeftPin, ledLeftState);
+	digitalWrite(ledRightPin, 0);
+	digitalWrite(ledLeftPin, 0);
 
 }
 
@@ -100,10 +96,8 @@ void MotorcontrolMovement(movement *direction){
 
         printf("Engine: STOP \n");
         writeData(&MotorC[0], 7);
-		ledRightState = 0;
-		digitalWrite(ledRightPin, ledRightState);
-		ledLeftState = 0;
-		digitalWrite(ledLeftPin, ledLeftState);
+		digitalWrite(ledRightPin, 0);
+		digitalWrite(ledLeftPin, 0);
 
     } else {
         printf("STOP: %d \n", hasToStop);
@@ -130,14 +124,12 @@ void MotorcontrolMovement(movement *direction){
 
 				if(lastSpeedLeft > lastSpeedRight){
 					printf("right");
-					ledLeftState = 0;
-					digitalWrite(ledLeftPin, ledLeftState);
-					toggleLed(ledRightPin, &ledRightState);
+					digitalWrite(ledLeftPin, 0);
+					digitalWrite(ledRightPin, 1);
 				}else if(lastSpeedLeft < lastSpeedRight){
 					printf("left");
-					ledRightState = 0;
-					digitalWrite(ledRightPin, ledRightState);
-					toggleLed(ledLeftPin, &ledLeftState);
+					digitalWrite(ledRightPin, 0);
+					digitalWrite(ledLeftPin, 1);
 
 				}else{
 					ledRightState = 0;
