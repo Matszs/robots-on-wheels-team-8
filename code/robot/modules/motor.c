@@ -15,10 +15,10 @@ int lastSpeedRight = -1;
 int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
 uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
-char ledLeftPin = 10;
-char ledRightPin = 11;
-char ledLeftState = 0;
-char ledRightState = 0;
+int ledLeftPin = 10;
+int ledRightPin = 11;
+int ledLeftState = 0;
+int ledRightState = 0;
 
 typedef struct {
 	uint8_t Left:4;
@@ -31,7 +31,7 @@ void writeData(uint8_t * data, int lenght){
 		wiringPiI2CWrite(motor, data[i]);
 }
 
-void toggleLed(int pin, char * state){
+void toggleLed(int pin, int * state){
 	*state = *state == 0 ? 1 : 0;
 	digitalWrite(pin, *state);
 }
