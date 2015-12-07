@@ -86,11 +86,10 @@ void run() {
 
 void onCommand(uint8_t opcode, char *commandData) {
 	if(opcode == 1) {
-		void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t) = MotorcontrolMovement;
 		movement direction;
 
 		unpackMovement((uint8_t)commandData[0], &direction);
-		MotorControl(&direction, *motorCallback);
+		MotorcontrolMovement(&direction);
 	} else if(opcode == 8) {
 	    automaticStop = (uint8_t)(commandData[0]);
 	    printf("stop: %d", automaticStop);
@@ -101,5 +100,8 @@ void onCommand(uint8_t opcode, char *commandData) {
 }
 
 void onDisconnect() {
-	MotorcontrolMovement(0, 0, 0, 0); // stop driving
+	movement direction;
+	
+	unpackMovement((uint8_t)0, &direction);
+	MotorcontrolMovement(&direction);
 }

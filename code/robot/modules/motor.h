@@ -21,7 +21,7 @@ typedef struct {
 
 void unpackMovement(uint8_t getal, movement *direction);
 
-void MotorControl(movement *direction, void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t));
+void MotorcontrolMovement(movement *direction);
 
 void MotorInit();
 

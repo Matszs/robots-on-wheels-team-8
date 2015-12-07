@@ -27,34 +27,23 @@ void unpackMovement(uint8_t input, movement *direction){
     direction->Right = (input << 4) >> 4;
 }
 
-void MotorControl(movement *direction, void (*motorCallback)(uint8_t,uint8_t,uint8_t,uint8_t)){
-   // 0000 (links)  		0000 (rechts)
-   // ^ richting			^ richting
-   //  ^^^ snelheid			 ^^^ snelheid
-
-   // 0001 0001
-
-    uint8_t rotationDirectionLeft = direction->Left >> 3 & 1;
-    uint8_t rotationDirectionRight = direction->Right >> 3 & 1;
-    uint8_t rotationSpeedLeft = direction->Left & 7;
-    uint8_t rotationSpeedRight = direction->Right & 7;
-
+void MotorcontrolMovement(movement *direction){
+	
+	uint8_t richtingLinks = ((direction->Left >> 3 & 1) == 1) ? 1 : 2;
+	uint8_t richtingRechts = ((direction->Right >> 3 & 1) == 1) ? 1 : 2;
+	uint8_t rotationSpeedLeft = direction->Left & 7;
+	uint8_t rotationSpeedRight = direction->Right & 7;
+	
 	if(DEBUG) {
 		printf("direction->Left:        %d\n", direction->Left);
 		printf("direction->Right:       %d\n", direction->Right);
-		printf("rotationDirectionLeft:  %d\n", rotationDirectionLeft);
-		printf("rotationDirectionRight: %d\n", rotationDirectionRight);
+		printf("rotationDirectionLeft:  %d\n", richtingLinks);
+		printf("rotationDirectionRight: %d\n", richtingRechts);
 		printf("rotationSpeedLeft:      %d\n", rotationSpeedLeft);
 		printf("rotationSpeedRight:     %d\n\n", rotationSpeedRight);
-    }
+	}
+	
 
-    motorCallback(rotationDirectionLeft, rotationSpeedLeft, rotationDirectionRight, rotationSpeedRight);
-}
-
-void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLeft, uint8_t rotationDirectionRight, uint8_t rotationSpeedRight){
-
-    uint8_t richtingLinks = (rotationDirectionLeft == 1) ? 1 : 2;
-    uint8_t richtingRechts = (rotationDirectionRight == 1) ? 1 : 2;
     uint8_t MotorC[7];
 
     // No speed, no direction so stop moving.
