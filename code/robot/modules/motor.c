@@ -113,12 +113,12 @@ void MotorcontrolMovement(movement *direction){
 
 				if(lastSpeedLeft > lastSpeedRight){
 					printf("right");
-					digitalWrite(ledLeftPin, 0);
-					digitalWrite(ledRightPin, 1);
+					digitalWrite(ledLeftPin, 1);
+					digitalWrite(ledRightPin, 0);
 				}else if(lastSpeedLeft < lastSpeedRight){
 					printf("left");
-					digitalWrite(ledRightPin, 0);
-					digitalWrite(ledLeftPin, 1);
+					digitalWrite(ledRightPin, 1);
+					digitalWrite(ledLeftPin, 0);
 
 				}else{
 					digitalWrite(ledRightPin, 0);
