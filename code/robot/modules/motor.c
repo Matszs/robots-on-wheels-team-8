@@ -31,7 +31,7 @@ void writeData(uint8_t * data, int lenght){
 		wiringPiI2CWrite(motor, data[i]);
 }
 
-void toggleLed(int pin, int * state){
+void toggleLed(int pin, char * state){
 	*state = *state == 0 ? 1 : 0;
 	digitalWrite(pin, *state);
 }
