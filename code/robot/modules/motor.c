@@ -21,6 +21,15 @@ typedef struct {
 	uint8_t Right:4;
 } movement;
 
+void MotorInit() {
+	uint8_t Totalpower[2]={4,250};
+	uint8_t Softstart[3]={0x91,23,0};
+	motor = wiringPiI2CSetup(0x32);
+	if (motor < 0)
+		printf("wiringPiI2CSetup failed.\n");
+	writeData(&Totalpower[0], 2);
+	writeData(&Softstart[0], 3);
+}
 
 void writeData(uint8_t * data, int lenght){
     int i;
@@ -97,12 +106,3 @@ void MotorcontrolMovement(movement *direction){
     }
 }
 
-void MotorInit() {
-	uint8_t Totalpower[2]={4,250};
-	uint8_t Softstart[3]={0x91,23,0};
-	motor = wiringPiI2CSetup(0x32);
-	if (motor < 0)
-		printf("wiringPiI2CSetup failed.\n");
-	writeData(&Totalpower[0], 2);
-	writeData(&Softstart[0], 3);
-}
