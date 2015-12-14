@@ -76,7 +76,8 @@ void check_database(char license[100]) {
 		printf ("fields %d\n", num_fields);
 
 		MYSQL_ROW row;
-		while ((row = mysql_fetch_row(result))) {
+		while ((row = mysql_fetch_row(result)) != NULL) {
+			printf("data:  %s \n", row[0]);
 			printf("kaas");
 			int i;
 			for(i = 0; i < num_fields; i++) {
