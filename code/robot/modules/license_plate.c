@@ -60,9 +60,14 @@ void check_database(char license[100]) {
 	}
 
 MYSQL_RES *result = mysql_store_result(con);
-	if (mysql_query(con, query)) {
 
-		if (!result) {
+	if(mysql_query(con, query)) {
+				printf("Query failed: %s\n", 						mysql_error(con));
+				}
+
+	else{
+
+		if(!result) {
 			printf("Couldn't get results set: %s\n", mysql_error(con));
 		}
 
@@ -73,16 +78,13 @@ MYSQL_RES *result = mysql_store_result(con);
 		while ((row = mysql_fetch_row(result))) {
 			int i;
 			for(i = 0; i < num_fields; i++) {
-				printf("%s ", row[i] ? row[i] : "NULL");
+				printf("%f", row[i] ? row[i] : "NULL");
 			}
 			
 		}
 }
 		
-		else{
-		printf("Query failed: %s\n", mysql_error(con));
-	}
-	mysql_free_result(result);
+		mysql_free_result(result);
 	mysql_close(con);
 	return EXIT_SUCCESS;
 }
