@@ -23,10 +23,25 @@ typedef struct {
 	uint8_t Right:4;
 } movement;
 
-void writeData(uint8_t * data, int lenght){
-	int i;
-	for (i = 0; i < lenght; i++)
-		wiringPiI2CWrite(motor, data[i]);
+int writeData(uint8_t * data, int lenght){
+	return writeDataRec(data, lenght, 0);
+}
+
+int writeDataRec(uint8_t * data, int lenght, int depth){
+	if (depth >= 3){ return -1; }
+	
+    int i;
+	int error = 0;
+	
+	for (i = 0; i < lenght; i++){
+		error = wiringPiI2CWrite(motor, data[i]);
+		if(error < 0){
+			printf("weel error");
+			return writeDataRec(data, lenght, depth+1);
+		}
+	}
+	
+	return 1;
 }
 
 void MotorInit() {
@@ -126,7 +141,9 @@ void MotorcontrolMovement(movement *direction){
 
 				}
                 printf("Engine: riding \n");
-                writeData(&MotorC[0], 7);
+				if(writeData(&MotorC[0], 7) <0){
+					printf("Error while sending command to motor \n");
+				}
             }
         }
     }
