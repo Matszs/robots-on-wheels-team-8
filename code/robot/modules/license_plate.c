@@ -69,6 +69,7 @@ void check_database(char license[100]) {
 		}
 
 		int num_fields = mysql_num_fields(result);
+		
 
 		MYSQL_ROW row;
 		while ((row = mysql_fetch_row(result))) {
@@ -79,7 +80,7 @@ void check_database(char license[100]) {
 			
 		}
 	}
-
+	mysql_free_result(result);
 	mysql_close(con);
 	return EXIT_SUCCESS;
 }
