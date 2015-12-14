@@ -16,10 +16,22 @@ int lastSpeedRight = -1;
 int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
 
-void writeData(uint8_t * data, int lenght){
+int writeData(uint8_t * data, int lenght){
+	return writeData(data, lenght, 0);
+}
+
+int writeData(uint8_t * data, int lenght, int depth){
+	if (depth >= 3){ return -1; }
+	
     int i;
-	for (i = 0; i < lenght; i++)
-		wiringPiI2CWrite(motor, data[i]);
+	int error = 0;
+	
+	for (i = 0; i < lenght; i++){
+		error = wiringPiI2CWrite(motor, data[i]);
+		if(error < 0){ return wiringPiI2CWrite(motor, data[i], depth+1); }
+	}
+	
+	return 1;
 }
 
 void unpackMovement(uint8_t input, movement *direction){
@@ -96,7 +108,9 @@ void MotorcontrolMovement(uint8_t rotationDirectionLeft, uint8_t rotationSpeedLe
                 isDriving = 1;
 
                 printf("Engine: riding \n");
-                writeData(&MotorC[0], 7);
+				if(writeData(&MotorC[0], 7) <0){
+					printf("Error while sending command to motor \n");
+				}
             }
         }
     }
