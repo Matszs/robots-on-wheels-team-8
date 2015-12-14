@@ -73,19 +73,19 @@ void check_database(char license[100]) {
 		}
 
 		int num_fields = mysql_num_fields(result);
-		
+		printf ("%i", num_fields);
 
 		MYSQL_ROW row;
 		while ((row = mysql_fetch_row(result))) {
 			int i;
 			for(i = 0; i < num_fields; i++) {
-				printf("%f", row[i] ? row[i] : "NULL");
+				printf("%s", row[i] ? row[i] : "NULL");
 			}
 			
 		}
 
 		
-		mysql_free_result(result);
+	mysql_free_result(result);
 	mysql_close(con);
 	return EXIT_SUCCESS;
 }
