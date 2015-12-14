@@ -59,7 +59,7 @@ void check_database(char license[100]) {
 	  finish_with_error(con);
 	}
 
-	if (mysql_query(con, query)) {
+	if (!mysql_query(con, query)) {
 		printf("Query failed: %s\n", mysql_error(con));
 	} else {
 		MYSQL_RES *result = mysql_store_result(con);
