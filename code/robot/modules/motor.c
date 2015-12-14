@@ -28,7 +28,10 @@ int writeDataRec(uint8_t * data, int lenght, int depth){
 	
 	for (i = 0; i < lenght; i++){
 		error = wiringPiI2CWrite(motor, data[i]);
-		if(error < 0){ return writeDataRec(data, lenght, depth+1); }
+		if(error < 0){
+			printf("weel error");
+			return writeDataRec(data, lenght, depth+1);
+		}
 	}
 	
 	return 1;
