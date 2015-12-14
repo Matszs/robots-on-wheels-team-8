@@ -47,7 +47,7 @@ void check_database(char license[100]) {
     char query[300];
 
 
-    sprintf(query,"SELECT fine FROM cars WHERE license LIKE '12-56'");
+    sprintf(query,"SELECT fine FROM cars WHERE license LIKE '%%%s%%', license");
     MYSQL *con = mysql_init(NULL);
 
     if (con == NULL) {
@@ -68,7 +68,7 @@ MYSQL_RES *result = mysql_store_result(con);
 	else{
 
 		if(!result) {
-			printf("Couldn't get results set: %s\n", mysql_error(con));
+			printf("Couldn't get results set: %s\n", 				mysql_error(con));
 		}
 
 		int num_fields = mysql_num_fields(result);
