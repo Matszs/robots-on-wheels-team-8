@@ -17,10 +17,10 @@ int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
 
 int writeData(uint8_t * data, int lenght){
-	return writeData(&data, lenght, 0);
+	return writeDataRec(data, lenght, 0);
 }
 
-int writeData(uint8_t * data, int lenght, int depth){
+int writeDataRec(uint8_t * data, int lenght, int depth){
 	if (depth >= 3){ return -1; }
 	
     int i;
@@ -28,7 +28,7 @@ int writeData(uint8_t * data, int lenght, int depth){
 	
 	for (i = 0; i < lenght; i++){
 		error = wiringPiI2CWrite(motor, data[i]);
-		if(error < 0){ return writeData(&data, lenght, depth+1); }
+		if(error < 0){ return writeDataRec(data, lenght, depth+1); }
 	}
 	
 	return 1;
