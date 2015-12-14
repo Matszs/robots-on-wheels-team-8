@@ -28,7 +28,7 @@ int writeData(uint8_t * data, int lenght, int depth){
 	
 	for (i = 0; i < lenght; i++){
 		error = wiringPiI2CWrite(motor, data[i]);
-		if(error < 0){ return wiringPiI2CWrite(motor, data[i], depth+1); }
+		if(error < 0){ return writeData(data, lenght, depth+1); }
 	}
 	
 	return 1;
