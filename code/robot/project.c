@@ -60,6 +60,7 @@ void run() {
 	speedInit();
 	compassInit();
 	wallStopInit();
+	licensePlateInit();
 //	servoInit();
 
     while(1) {
