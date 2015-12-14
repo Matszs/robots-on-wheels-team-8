@@ -66,7 +66,7 @@ void check_database(char license[100]) {
 				}
 
 	
-	MYSQL_RES *result = mysql_store_result(con);
+	MYSQL_RES *result = mysql_use_result(con);
 
 		if(!result) {
 			printf("Couldn't get results set: %s\n", 				mysql_error(con));
