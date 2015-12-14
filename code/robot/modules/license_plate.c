@@ -74,8 +74,9 @@ void check_database(char license[100]) {
 
 		int num_fields = mysql_num_fields(result);
 
-		char fine = mysql_fetch_object(result);
+		char fine = mysql_fetch_field(result);
 		printf("%s\n",result);
+
 		
 	mysql_free_result(result);
 	mysql_close(con);
