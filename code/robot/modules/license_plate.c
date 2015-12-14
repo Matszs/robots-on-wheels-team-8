@@ -78,6 +78,7 @@ void check_database(char license[100]) {
 			}
 			
 		}
+}
 		
 		else{
 		printf("Query failed: %s\n", mysql_error(con));
