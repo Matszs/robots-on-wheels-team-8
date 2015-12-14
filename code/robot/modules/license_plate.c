@@ -47,7 +47,7 @@ void check_database(char license[100]) {
     char query[300];
 
 
-    sprintf(query,"SELECT fine FROM cars WHERE license LIKE '12-56');
+    sprintf(query,"SELECT fine FROM cars WHERE license LIKE '12-56'");
     MYSQL *con = mysql_init(NULL);
 
     if (con == NULL) {
