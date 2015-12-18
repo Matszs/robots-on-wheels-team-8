@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="compass"><img src="http://1.bp.blogspot.com/-0na65G4PvBE/U_-xq3GZQqI/AAAAAAAAHG0/OvClI5MoUWE/s1600/compass_rose_by_draconicparagon-d6rjgqi.png" alt=""></div>
+    <div class="joystick-container">
+        <div class="joystick">
+            <div class="stick" draggable="true">&nbsp;</div>
+        </div>
+    </div>
+    <div class="plate"><button>get plate</button><div class="hide plateInfo"></div></div>
+    <div class="info">
+        <div class="speed"><span></span>m/s</div>
+        <div class="dis"><span></span>cm</div>
+        <div class="stop"><input type="checkbox"></div>
+    </div>
+</div>
+<style>
+    .joystick-container {
+        box-sizing: border-box;
+    }
+    .joystick{
+        background: #7599ff;
+        width: 10em;
+        height: 10em;
+    }
+    .stick{
+        background: #323f69;
+        width: 30%;
+        height: 30%;
+        margin: 35% 35%;
+    }
+    .joystick-container div{
+        box-sizing: border-box;
+        float: left;
+        border-radius: 100%;
+    }
+    .compass img{
+        -webkit-transition-duration: 0.5s;
+        -moz-transition-duration: 0.5s;
+        -o-transition-duration: 0.5s;
+        transition-duration: 0.5s;
+
+        -webkit-transition-property: -webkit-transform;
+        -moz-transition-property: -moz-transform;
+        -o-transition-property: -o-transform;
+        transition-property: transform;
+    }
+</style>
+	<script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener("drag", function( event ) {
+
+            }, false);
+
+            document.addEventListener("dragstart", function( event ) {
+                // store a ref. on the dragged elem
+                dragged = event.target;
+                // make it half transparent
+                event.target.style.opacity = .5;
+            }, false);
+
+            document.addEventListener("dragover", function(e){
+                e = e || window.event;
+                var dragX = e.pageX, dragY = e.pageY;
+
+                console.log("X: "+dragX+" Y: "+dragY);
+                event.preventDefault();
+
+
+            }, false);
+
+            var draggable = document.getElementById('draggable');
+            draggable.addEventListener('touchmove', function(event) {
+                var touch = event.targetTouches[0];
+
+                // Place element where the finger is
+                draggable.style.left = touch.pageX-25 + 'px';
+                draggable.style.top = touch.pageY-25 + 'px';
+                event.preventDefault();
+            }, false);
+
+
+            var defaultOpt = 0;
+            var motorOpt = 1;
+            var distanceOpt = 2;
+            var speedOpt = 3;
+            var cameraOpt = 4;
+            var servoOpt = 5;
+            var compassOpt = 6;
+            var licenseOpt = 7;
+            var wallStopOpt = 8;
+            var vibrateOpt = 9;
+
+            var socket = new WebSocket("ws://localhost:1234");
+
+            socket.onopen = function () {
+                console.log('Socket Status: ' + socket.readyState + ' (open)');
+                var sendBuffer = new Uint8Array(new ArrayBuffer(2));
+
+                var button = document.querySelector('button');
+                button.addEventListener('click', function () {
+                    sendBuffer.set([licenseOpt, 0]);
+                    socket.send(sendBuffer);
+                }, false);
+
+                var checkbox = document.querySelector('.stop input');
+                checkbox.addEventListener('change', function () {
+
+                    if (checkbox.checked) {
+                        sendBuffer.set([wallStopOpt, true]);
+                    } else {
+                        sendBuffer.set([wallStopOpt, false]);
+                    }
+
+                    socket.send(sendBuffer);
+
+                    console.log("checkbox ", sendBuffer);
+                }, false);
+            }
+
+            socket.onerror = function (error) {
+                console.log(error);
+            }
+
+            socket.onmessage = function (msg) {
+//                console.log('Received: ' + msg.data);
+                var opt = parseInt(msg.data[0]);
+                var pld = msg.data.substring(1, 1024);
+                switch (opt){
+                    case compassOpt:
+                        document.querySelector('.compass img').style.transform = "rotate(" + pld + "deg)";
+                        break;
+                    case speedOpt:
+                        document.querySelector('.speed span').textContent = pld;
+                        break
+                    case distanceOpt:
+                        document.querySelector('.dis span').textContent = pld;
+                        break
+                    case licenseOpt:
+                        document.querySelector('.plateInfo').textContent = pld;
+                        break
+                    case wallStopOpt:
+                        document.querySelector('.stop input').checked = pld;
+                        break
+                }
+
+//                console.log(opt, pld);
+            }
+
+            socket.onclose = function () {
+                console.log('Socket Status: ' + socket.readyState + ' (Closed)');
+            }
+        }, false);
+    </script>
+</body>
+</html>
+
