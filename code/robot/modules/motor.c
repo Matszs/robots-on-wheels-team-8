@@ -14,7 +14,8 @@ int lastSpeedLeft = -1;
 int lastSpeedRight = -1;
 int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
-uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
+//uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
+uint8_t speedTable[7] = {0, 8, 16, 24, 32, 40, 48};
 int ledLeftPin = 10;
 int ledRightPin = 11;
 
