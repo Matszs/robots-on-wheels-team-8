@@ -41,45 +41,55 @@ int Base64Encode(const unsigned char* buffer, int length, char** b64text) {
 
 
 
+
 void socketInit() {
-    socketConnection = socket(AF_INET , SOCK_STREAM , 0);
-
-    if (socketConnection == -1)
-        printf("Could not create socket");
-
-    //Prepare the sockaddr_in structure
-    server.sin_family = AF_INET;
-    server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons( PORT_NUMBER );
-
-    // Make is possible to re-use ports.
-    int yes = 1;
-    if ( setsockopt(socketConnection, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 )
-        printf("Error so_reusaddr");
+	socketConnection = socket(AF_INET , SOCK_STREAM , 0);
+	
+	if (socketConnection == -1)
+		printf("Could not create socket");
+	
+	//Prepare the sockaddr_in structure
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = INADDR_ANY;
+	server.sin_port = htons( PORT_NUMBER );
+	
+	// Make is possible to re-use ports.
+	int yes = 1;
+	if ( setsockopt(socketConnection, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 )
+		printf("Error so_reusaddr");
 	
 	struct timeval timeout;
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
 	
 	if (setsockopt (socketConnection, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
-		error("setsockopt failed\n");
-
-    //Bind
-    if( bind(socketConnection,(struct sockaddr *)&server , sizeof(server)) == -1)
-        printf("Couln't bind to socket, port already in use?");
-
+		printf("setsockopt failed\n");
+	
+	//Bind
+	if( bind(socketConnection,(struct sockaddr *)&server , sizeof(server)) == -1)
+		printf("Couln't bind to socket, port already in use?");
+	
 	printf("\n----------------------- ");
-    printf("Socket connection opened, ready to take connections on port %d", PORT_NUMBER);
-    printf(" -----------------------\n\n");
-
-    //Listen
-    listen(socketConnection , 3);
-
-    //start listening in other thread
+	printf("Socket connection opened, ready to take connections on port %d", PORT_NUMBER);
+	printf(" -----------------------\n\n");
+	
+	//Listen
+	listen(socketConnection , 3);
+	
+	//start listening in other thread
 	if (!threatRunning){
 		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
 	}
+	sleep(5);
+	//
+	//	writeToSocket(6, "180");
+	//	writeToSocket(3, "123");
+	//	writeToSocket(2, "87");
+	//	writeToSocket(7, "12-56 (9,98 euro)");
+	//	pthread_join(socketConnectionThread, NULL);
 }
+
+
 
 void *listenForConnections(void *arg) {
 	threatRunning = 1;
