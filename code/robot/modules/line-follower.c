@@ -14,39 +14,48 @@
 #define SPEED 9600
 
 void *lineFollowReader(void *arg);
-int fd;
+int fdArduino;
 int dataAvailable;
 int currentCharacter;
 
 char start[1] = "\x02";   //start flag
 char stop[1] ="\x03";      //stop flag
+char breakPoint[1] =",";      //stop flag
 
 char current_buffer[100], old_buffer[100];
 int i, j, dataAvailable, currentCharacter;
 
 void lineFollowerInit() {
 	wiringPiSetup();
-	fd = serialOpen(SERIAL_DEV, SPEED);
-	printf("USB: %d \n", fd);
-	serialFlush(fd);
+	fdArduino = serialOpen(SERIAL_DEV, SPEED);
+	printf("USB: %d \n", fdArduino);
 
-	printf("line follower");
+	if(fdArduino >= 0) {
+		serialFlush(fdArduino);
 
-	pthread_t lineFollowReaderThread;
-    pthread_create(&lineFollowReaderThread, NULL, lineFollowReader, NULL);
+		pthread_t lineFollowReaderThread;
+    	pthread_create(&lineFollowReaderThread, NULL, lineFollowReader, NULL);
+    }
+}
+
+void lineTracking(int led1, int led2, int led3, int led4) {
+	printf("> %d, %d, %d, %d <\n", led1, led2, led3, led4);
 }
 
 void *lineFollowReader(void *arg) {
 	for (;;) {
-		dataAvailable = serialDataAvail(fd);
+		dataAvailable = serialDataAvail(fdArduino);
 		if (dataAvailable >= 12) {
 			j=0;
 			for (i=0; i < dataAvailable; i++) {
-				currentCharacter = serialGetchar(fd);
+				currentCharacter = serialGetchar(fdArduino);
 				if ( currentCharacter == start[0]) {
 					for(;;)	{
-						currentCharacter = serialGetchar(fd);
-						if (currentCharacter == stop[0]) {
+						currentCharacter = serialGetchar(fdArduino);
+						if(currentCharacter == breakPoint[0]) {
+							current_buffer[j] = ' ';
+                            j++;
+						}else if (currentCharacter == stop[0]) {
 							current_buffer[j] = '\0';
 							break;
 						} else {
@@ -55,10 +64,22 @@ void *lineFollowReader(void *arg) {
 						}
 					}
 					if (strcmp(current_buffer,old_buffer) != 0) {
-						printf("%i Characters buffered: %s\n",j, current_buffer);
+						if(DEBUG)
+							printf("%i Characters buffered: %s\n",j, current_buffer);
 						strcpy(old_buffer, current_buffer);
 					}
-					serialFlush(fd);
+
+					char * pEnd;
+					int led1, led2, led3, led4;
+
+					led1 = strtol (current_buffer, &pEnd, 10);
+                    led2 = strtol (pEnd, &pEnd, 10);
+                    led3 = strtol (pEnd, &pEnd, 10);
+                    led4 = strtol (pEnd, NULL, 10);
+
+					lineTracking(led1, led2, led3, led4);
+
+					serialFlush(fdArduino);
 					break;
 				}
 			}
