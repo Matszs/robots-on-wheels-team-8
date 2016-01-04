@@ -125,7 +125,7 @@ void *listenForConnections(void *arg) {
 				if (websocketKeyLoc != NULL) {
 					strncpy(keystr, websocketKeyLoc, 43);
 					strncpy(websocketKey, strstr(keystr, ": ")+2, 24);
-					sprintf(string,"%s%s", websocketKey, GUID);
+					sprintf(string,"%.24s%.36s", websocketKey, GUID);
 					
 					SHA1((unsigned char *)&string, 60, (unsigned char*)&hash);
 					
