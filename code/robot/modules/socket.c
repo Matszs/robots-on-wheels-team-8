@@ -61,27 +61,31 @@ void socketInit() {
 
 void *listenForConnections(void *arg) {
 	threatRunning = 1;
-    while(1) {
-        int c;
-        long read_size;
-        struct sockaddr_in client;
-        char client_message[1024];
-
-        c = sizeof(struct sockaddr_in);
-
-        int tmpUserSocket;
-
-        tmpUserSocket = accept(socketConnection, (struct sockaddr *)&client, (socklen_t*)&c);
-        if (tmpUserSocket == -1)
-            printf("accept failed\n");
-
-        if(userSocket >= 0) // if there is already a socket connected, disconnect
-            close(userSocket);
-
-        userSocket = tmpUserSocket;
-
-        //char * sendBuff = "Connection established.";
-        //write(userSocket, sendBuff, strlen(sendBuff));
+	while(1) {
+		long read_size;
+		struct sockaddr_in client;
+		int c, i, authenticated = 0, readSize = 1024, tmpUserSocket;
+		char client_message[1024], keystr[43], websocketKey[24], string[sizeof(websocketKey)+sizeof(GUID)+ 1];
+		
+		unsigned char hash[SHA_DIGEST_LENGTH], encoded[2], key[4];
+		char response[130];
+		char * websocketKeyLoc, * tokenRaw;
+		
+		c = sizeof(struct sockaddr_in);
+		
+		tmpUserSocket = accept(socketConnection, (struct sockaddr *)&client, (socklen_t*)&c);
+		if (tmpUserSocket == -1)
+			printf("accept failed\n");
+		
+		if(userSocket >= 0) // if there is already a socket connected, disconnect
+			close(userSocket);
+		
+		userSocket = tmpUserSocket;
+		
+		//char * sendBuff = "Connection established.";
+		//write(userSocket, sendBuff, strlen(sendBuff));
+		
+		printf("Client has connected!\n");
 
         printf("Client has connected!\n");
 		while((read_size = recv(userSocket, client_message, readSize, 0)) > 0 ){
