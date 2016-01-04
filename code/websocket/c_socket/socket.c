@@ -23,7 +23,8 @@
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <time.h>
-#define PORT_NUMBER 1234
+#define PORT_NUMBER 1212
+#define DEBUG 1
 #endif
 
 void onCommand(uint8_t opcode, char *commandData);
