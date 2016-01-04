@@ -4,6 +4,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.print("\x02");
   Serial.print("IR 1: ");
   Serial.print(analogRead(A0));
   Serial.print(" IR 2: ");
@@ -12,7 +13,7 @@ void loop() {
   Serial.print(analogRead(A2));
   Serial.print(" IR 4: ");
   Serial.print(analogRead(A3));
-  Serial.println();
+  Serial.print("\x03");
   
   
   delay(1);
