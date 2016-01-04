@@ -84,81 +84,133 @@ void *listenForConnections(void *arg) {
         //write(userSocket, sendBuff, strlen(sendBuff));
 
         printf("Client has connected!\n");
-
-        while((read_size = recv(userSocket, client_message, 2, 0)) > 0 ){
-        	//write(userSocket, client_message, strlen(client_message));
-        	uint8_t opcode = client_message[0];
-
+		while((read_size = recv(userSocket, client_message, readSize, 0)) > 0 ){
+			//write(userSocket, client_message, strlen(client_message));
+			if (!authenticated) {
+				websocketKeyLoc = strstr(client_message, "Sec-WebSocket-Key");
+				if (websocketKeyLoc != NULL) {
+					strncpy(keystr, websocketKeyLoc, 43);
+					strncpy(websocketKey, strstr(keystr, ": ")+2, 24);
+					sprintf(string,"%s%s", websocketKey, GUID);
+					
+					SHA1((unsigned char *)&string, 60, (unsigned char*)&hash);
+					
+					Base64Encode(( const unsigned char * )&hash, SHA_DIGEST_LENGTH, &tokenRaw);
+					
+					sprintf(response,"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: %.28s\r\n\r\n", tokenRaw);
+					write(userSocket, response, sizeof(response)-1);
+					authenticated = 1;
+					readSize = 9;
+					web = 1;
+					continue;
+				}
+			}
+			
+			if (readSize > 2){
+				encoded[0] = client_message[6];
+				encoded[1] = client_message[7];
+				key[0] = client_message[2];
+				key[1] = client_message[3];
+				key[2] = client_message[4];
+				key[3] = client_message[5];
+				for ( i = 0; i < sizeof(encoded); i++) {
+					client_message[i] = (unsigned char) (encoded[i] ^ key[i % 4]);
+				}
+				client_message[2] = '\0';
+			}
+			
+			//write(userSocket, client_message, strlen(client_message));
+			uint8_t opcode = client_message[0];
+			
 			// Remove the opcode from the client_message
-			int j;
-			for(j = 0; j < (strlen(client_message) + 1); j++) {
-				if(j != 0)
-					client_message[j - 1] = client_message[j];
+			for(i = 0; i < (strlen(client_message) + 1); i++) {
+				if(i != 0)
+					client_message[i - 1] = client_message[i];
 			}
 			if(strlen(client_message) > 0){
-				client_message[j] = '\0';
+				client_message[i] = '\0';
 			}
-
+			
 			if(DEBUG) {
 				printf("Opcode: %d\n", opcode);
 				printf("Message: %d\n", client_message[0]);
 			}
-            onCommand(opcode, client_message);
-
-            int i;
+			
+			onCommand(opcode, client_message);
+			
 			for (i = 0; i < read_size; i++) {
 				client_message[i] = '\0';
 			}
-        }
-
-        if(read_size == 0) {
-            close(userSocket);
-            printf("Client disconnected\n");
-        }
-        else if(read_size == -1) {
-            userSocket = -1;
-            printf("Client error\n");
-        }
+		}
+		
+		if(read_size == 0) {
+			close(userSocket);
+			printf("Client disconnected\n");
+		}
+		else if(read_size == -1) {
+			userSocket = -1;
+			printf("Client error\n");
+		}
 		close(socketConnection);
+		
+		readSize = 1024;
+		authenticated = 0;
+		
 		socketInit();
-        onDisconnect();
-    }
+		onDisconnect();
+	}
 }
 
 void writeToSocket(uint8_t opcode, char *commandData) {
-    if(userSocket > 0) {
-        char client_message[1025];
-
-        client_message[0] = opcode;
-		if(DEBUG) {
-			printf("Write to socket len %d: ", strlen(commandData));
+	if(userSocket > 0) {
+		char client_message[1025];
+		int i, writeSocket;
+		for (i = 0; i < sizeof(client_message); i++) {
+			client_message[i] = '\0';
 		}
-        int i;
-		for(i = 0; i < 1024; i++){
-			if(DEBUG) {
-				printf("%d", client_message[i]);
-			}
-
-			if (i < strlen(commandData)) {
-				client_message[i + 1] = commandData[i];
+		client_message[0] = opcode;
+		if(DEBUG) printf("Write to socket len %lu: ", strlen(commandData));
+		for(i = 1; i < 1024; i++){
+			
+			if(DEBUG) printf("%d", client_message[i-1]);
+			
+			if (i-1 < strlen(commandData)) {
+				client_message[i] = commandData[i-1];
 			}
 			else{
-				client_message[i + 1] = '\0';
+				client_message[i] = '\0';
 			}
 		}
-		if(DEBUG) {
-			printf("\n");
+		if(DEBUG) printf("\n");
+		
+		if (web) {
+			char frame[131];
+			for (i = 0; i < sizeof(frame); i++) {
+				frame[i] = '\0';
+			}
+			
+			frame[0] = 129;
+			frame[1] = strlen(client_message);
+			client_message[0] = client_message[0]+'0';
+			snprintf(frame+2, 124, "%s", client_message);
+			printf("%s", frame);
+			
+			writeSocket = (int) write(userSocket, frame, 2 + strlen(client_message));
+			
+		}else{
+			writeSocket = (int) write(userSocket, client_message, 1025);
 		}
 		
-
-        int writeSocket = write(userSocket, client_message, 1025);
+		
+		
 		if (writeSocket == -1 ) {
 			close(socketConnection);
 			close(userSocket);
-
+			
 			userSocket = -1;
 			socketInit();
 			onDisconnect();
+			
 		}
 	}
 }

@@ -101,12 +101,12 @@ void socketInit() {
 		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
 	}
 	sleep(5);
-	
-	writeToSocket(6, "180");
-	writeToSocket(3, "123");
-	writeToSocket(2, "87");
-	writeToSocket(7, "12-56 (9,98 euro)");
-	pthread_join(socketConnectionThread, NULL);
+//	
+//	writeToSocket(6, "180");
+//	writeToSocket(3, "123");
+//	writeToSocket(2, "87");
+//	writeToSocket(7, "12-56 (9,98 euro)");
+//	pthread_join(socketConnectionThread, NULL);
 }
 
 void *listenForConnections(void *arg) {

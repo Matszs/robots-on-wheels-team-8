@@ -1,0 +1,76 @@
+html, body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+body {
+    /*position: relative*/
+}
+
+.container{
+    height: 100vh;
+}
+.joystick-container {
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.joystick{
+    background: #f6f6f6;
+    width: 10em;
+    height: 10em;
+    bottom: 0;
+    position: absolute;
+}
+.stick{
+    position: relative;
+    background: #b3b8bb;
+    width: 30%;
+    height: 30%;
+    top: 35%;
+    left: 35%;
+}
+.joystick-container div{
+    box-sizing: border-box;
+    float: left;
+    border-radius: 100%;
+
+}
+.info{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.info{
+    padding: 5px;
+}
+.plate *{
+    margin-left: -50%;
+}
+.plate{
+    position: absolute;
+    bottom: 5px;
+    left: 50vw;
+}
+
+.compass{
+    position: absolute;
+    top:5px;
+    left: 5px;
+    height: 40vh;
+    width: auto;
+}
+.compass img{
+    width: inherit;
+    height: inherit;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+}
