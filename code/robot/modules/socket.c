@@ -117,8 +117,6 @@ void *listenForConnections(void *arg) {
 		//char * sendBuff = "Connection established.";
 		//write(userSocket, sendBuff, strlen(sendBuff));
 		
-		printf("Client has connected!\n");
-
         printf("Client has connected!\n");
 		while((read_size = recv(userSocket, client_message, readSize, 0)) > 0 ){
 			//write(userSocket, client_message, strlen(client_message));
