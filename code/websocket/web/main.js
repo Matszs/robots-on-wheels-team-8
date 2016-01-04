@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var wallStopOpt = 8;
     var vibrateOpt = 9;
 
-    var socket = new WebSocket("ws://localhost:1234");
+    var socket = new WebSocket("ws://pi.akoo.nl:1212");
     var sendBuffer = new Uint8Array(new ArrayBuffer(2));
 
     socket.onopen = function () {
