@@ -45,6 +45,7 @@ int hasToStop = 0;
 #include "modules/servo.c"
 #include "modules/wall-stop.c"
 #include "modules/license_plate.c"
+#include "modules/line-follower.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -61,6 +62,7 @@ void run() {
 	compassInit();
 	wallStopInit();
 	licensePlateInit();
+	//lineFollowerInit();
 //	servoInit();
 
     while(1) {
