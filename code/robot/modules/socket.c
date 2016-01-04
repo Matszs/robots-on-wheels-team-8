@@ -10,14 +10,36 @@ void writeToSocket(uint8_t opcode, char *commandData);
 void onDisconnect();
 void *listenForConnections(void *arg);
 void run();
-int threatRunning = 0;
-struct sockaddr_in server;
-int socketConnection;
-int userSocket; // only one user can connect at the same time
 
+int threatRunning = 0, socketConnection, userSocket; // only one user can connect at the same time
+struct sockaddr_in server;
+char GUID[36] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+int web = 0;
 pthread_t socketConnectionThread;	// this is our thread identifier
 
 // TODO: Sometimes the socket server crashes (only when 'Client error' ?), fix
+
+int Base64Encode(const unsigned char* buffer, int length, char** b64text) {
+	BIO *bio, *b64;
+	BUF_MEM *bufferPtr;
+	
+	b64 = BIO_new(BIO_f_base64());
+	bio = BIO_new(BIO_s_mem());
+	bio = BIO_push(b64, bio);
+	
+	BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
+	BIO_write(bio, buffer, length);
+	BIO_flush(bio);
+	BIO_get_mem_ptr(bio, &bufferPtr);
+	BIO_set_close(bio, BIO_NOCLOSE);
+	BIO_free_all(bio);
+	
+	*b64text=(*bufferPtr).data;
+	
+	return (0);
+}
+
+
 
 void socketInit() {
     socketConnection = socket(AF_INET , SOCK_STREAM , 0);
