@@ -145,13 +145,14 @@ void *listenForConnections(void *arg) {
 				if (websocketKeyLoc != NULL) {
 					strncpy(keystr, websocketKeyLoc, 43);
 					strncpy(websocketKey, strstr(keystr, ": ")+2, 24);
-					sprintf(string,"%s%s", websocketKey, GUID);
+					sprintf(string,"%.24s%.36s", websocketKey, GUID);
 					
-					SHA1((unsigned char *)&string, 60, (unsigned char*)&hash);
-					
+					SHA1((unsigned char *)&string, 60, hash);
+
 					Base64Encode(( const unsigned char * )&hash, SHA_DIGEST_LENGTH, &tokenRaw);
 					
 					sprintf(response,"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: %.28s\r\n\r\n", tokenRaw);
+					                                        printf("\nclient:%s\n string: %s\n%s\n",client_message, string, response);
 					write(userSocket, response, sizeof(response)-1);
 					authenticated = 1;
 					readSize = 9;
