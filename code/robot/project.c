@@ -88,12 +88,12 @@ void run() {
 }
 
 void onCommand(uint8_t opcode, char *commandData) {
-	if(opcode == 1) {
+	if(opcode == OPT_MOTOR) {
 		movement direction;
 
 		unpackMovement((uint8_t)commandData[0], &direction);
 		MotorcontrolMovement(&direction);
-	} else if(opcode == 8) {
+	} else if(opcode == OPT_WALL_STOP) {
 	    automaticStop = (uint8_t)(commandData[0]);
 	    printf("stop: %d", automaticStop);
 	} else if(opcode == OPT_LICENSE) {
