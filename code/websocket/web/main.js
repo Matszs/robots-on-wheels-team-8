@@ -181,10 +181,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     evt.preventDefault();
 
                     if (idx >= 0) {
-
                         sendBuffer.set([motorOpt, calculateValue(touches[i].clientX - offset.left, touches[i].clientY - offset.top)]);
-                        socket.send(sendBuffer);
-
+                        if (socket.readyState == 1) {
+                            socket.send(sendBuffer);
+                        }
                         var newX = touches[i].clientX - offset.left;
                         var newY = touches[i].clientY - offset.top;
                         stick.style.left = newX - offsetstick.width / 2 + "px";
@@ -210,8 +210,9 @@ document.addEventListener('DOMContentLoaded', function () {
         stick.style.top = offset.height / 2 - offsetstick.height / 2 + "px";
         calculateValue(offset.width / 2 - offsetstick.width / 2, offset.height / 2 - offsetstick.height / 2);
         sendBuffer.set([motorOpt, 0]);
-        socket.send(sendBuffer);
-
+        if (socket.readyState == 1){
+            socket.send(sendBuffer);
+        }
     }
 
     function copyTouch(touch) {
@@ -226,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return i;
             }
         }
-        return -1; // not found
+        return -1;
     }
 
     function calculateValue(x, y) {
@@ -323,11 +324,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var right = 0;
 
         if (piePart == 0 || piePart == 1) {
-            left = speeding[0];
-            right = speeding[1];
-        } else if (piePart == 2 || piePart == 3) {
             left = speeding[1];
             right = speeding[0];
+        } else if (piePart == 2 || piePart == 3) {
+            left = speeding[0];
+            right = speeding[1];
         }
 
 

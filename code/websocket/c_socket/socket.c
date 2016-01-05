@@ -24,7 +24,6 @@
 #include <openssl/buffer.h>
 #include <time.h>
 #define PORT_NUMBER 1212
-#define DEBUG 1
 #endif
 
 void onCommand(uint8_t opcode, char *commandData);
@@ -103,11 +102,11 @@ void socketInit() {
 	}
 	sleep(5);
 //	
-//	writeToSocket(6, "180");
-//	writeToSocket(3, "123");
-//	writeToSocket(2, "87");
-//	writeToSocket(7, "12-56 (9,98 euro)");
-//	pthread_join(socketConnectionThread, NULL);
+	writeToSocket(6, "180");
+	writeToSocket(3, "123");
+	writeToSocket(2, "87");
+	writeToSocket(7, "12-56 (9,98 euro)");
+	pthread_join(socketConnectionThread, NULL);
 }
 
 void *listenForConnections(void *arg) {
