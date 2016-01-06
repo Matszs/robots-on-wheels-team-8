@@ -109,8 +109,12 @@ void *listenForConnections(void *arg) {
 		if (tmpUserSocket == -1)
 			printf("accept failed\n");
 		
-		if(userSocket >= 0) // if there is already a socket connected, disconnect
+		if(userSocket >= 0){
 			close(userSocket);
+			readSize = 1024;
+			authenticated = 0;
+			web = 0;
+		}// if there is already a socket connected, disconnect
 		
 		userSocket = tmpUserSocket;
 		
