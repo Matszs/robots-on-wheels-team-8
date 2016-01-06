@@ -79,8 +79,8 @@ void socketInit() {
 	//start listening in other thread
 	if (!threatRunning){
 		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
+		sleep(5);
 	}
-	sleep(5);
 	//
 	//	writeToSocket(6, "180");
 	//	writeToSocket(3, "123");
