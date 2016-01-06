@@ -137,6 +137,9 @@ void *listenForConnections(void *arg) {
 					readSize = 9;
 					web = 1;
 					continue;
+				}else{
+					readSize = 2;
+					authenticated = 1;
 				}
 			}
 			
@@ -189,6 +192,7 @@ void *listenForConnections(void *arg) {
 		
 		readSize = 1024;
 		authenticated = 0;
+		web = 0;
 		
 		socketInit();
 		onDisconnect();
