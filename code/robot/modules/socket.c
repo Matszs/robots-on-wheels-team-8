@@ -15,9 +15,8 @@ int threatRunning = 0, socketConnection, userSocket; // only one user can connec
 struct sockaddr_in server;
 char GUID[36] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 int web = 0;
+int isConnected = 0;
 pthread_t socketConnectionThread;	// this is our thread identifier
-
-// TODO: Sometimes the socket server crashes (only when 'Client error' ?), fix
 
 int Base64Encode(const unsigned char* buffer, int length, char** b64text) {
 	BIO *bio, *b64;
@@ -38,8 +37,6 @@ int Base64Encode(const unsigned char* buffer, int length, char** b64text) {
 	
 	return (0);
 }
-
-
 
 
 void socketInit() {
@@ -118,6 +115,7 @@ void *listenForConnections(void *arg) {
 		//write(userSocket, sendBuff, strlen(sendBuff));
 		
         printf("Client has connected!\n");
+        isConnected = 1;
 		while((read_size = recv(userSocket, client_message, readSize, 0)) > 0 ){
 			//write(userSocket, client_message, strlen(client_message));
 			if (!authenticated) {
@@ -179,10 +177,12 @@ void *listenForConnections(void *arg) {
 		
 		if(read_size == 0) {
 			close(userSocket);
+			isConnected = 0;
 			printf("Client disconnected\n");
 		}
 		else if(read_size == -1) {
 			userSocket = -1;
+			isConnected = 0;
 			printf("Client error\n");
 		}
 		close(socketConnection);
@@ -242,6 +242,7 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 			close(userSocket);
 			
 			userSocket = -1;
+			isConnected = 0;
 			socketInit();
 			onDisconnect();
 			

@@ -110,25 +110,6 @@
 				android:id="@+id/distance_field"
 				android:layout_below="@+id/speed_field"
 				android:layout_centerHorizontal="true"/>
-
-			<RelativeLayout
-				android:layout_width="100dp"
-				android:layout_height="40dp"
-				android:layout_below="@+id/distance_field"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentStart="true"
-				android:id="@+id/wall_hit_holder">
-
-				<CheckBox
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Stop before hitting the wall"
-					android:id="@+id/wall_hit"
-					android:layout_alignParentTop="true"
-					android:layout_alignParentRight="true"
-					android:layout_alignParentEnd="true"
-					android:textSize="10dp"/>
-			</RelativeLayout>
 		</RelativeLayout>
 
 		<TextView
@@ -145,8 +126,8 @@
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Kenteken lezen"
-			android:id="@+id/read_license_plate"
+			android:text="Settings"
+			android:id="@+id/settings_button"
 			android:layout_alignBottom="@+id/joystick_container"
 			android:layout_centerHorizontal="true"/>
 

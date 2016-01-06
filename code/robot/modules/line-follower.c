@@ -14,6 +14,10 @@
 #define SPEED 9600
 
 void *lineFollowReader(void *arg);
+
+int lineFollowingEnabled = 0;
+int lineFollowingOnDark = 1;
+
 int fdArduino;
 int dataAvailable;
 int currentCharacter;
@@ -44,6 +48,11 @@ void lineTracking(int led1, int led2, int led3, int led4) {
 
 void *lineFollowReader(void *arg) {
 	for (;;) {
+		if(!isConnected) { // check if socket connected.
+			usleep(100000);
+			continue;
+		}
+
 		dataAvailable = serialDataAvail(fdArduino);
 		if (dataAvailable >= 12) {
 			j=0;

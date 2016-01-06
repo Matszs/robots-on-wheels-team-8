@@ -25,6 +25,7 @@ import android.support.v4.app.NavUtils;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -50,6 +51,8 @@ import java.util.Calendar;
 
 import hva.row8.Classes.Calculation;
 import hva.row8.Classes.Connection;
+import hva.row8.Dialogs.ConnectionEditDialog;
+import hva.row8.Dialogs.ConnectionSettingsDialog;
 import hva.row8.Interfaces.DataReceiveListener;
 import hva.row8.Interfaces.MoveListener;
 import hva.row8.Modules.Joystick;
@@ -71,12 +74,11 @@ public class ConnectionActivity extends AppCompatActivity {
 	public Application application;
 	private Connection connection;
 	private float lastCompassRotation = 0;
-	SocketClient socketConnection;
+	public SocketClient socketConnection;
 	private boolean mVisible;
 	private TextView status;
-	private Button licensePlateButton;
+	private Button settingsButton;
 
-	private RelativeLayout wallHitHolder;
     private boolean isActive = false;
 
 	private final Handler mHideHandler = new Handler();
@@ -115,9 +117,7 @@ public class ConnectionActivity extends AppCompatActivity {
 		connection = application.connectionDataSource.getConnection(connectionId);
 		mContentView = findViewById(R.id.connection_holder);
 		videoOverlay = (RelativeLayout)findViewById(R.id.video_overlay);
-		wallHitHolder = (RelativeLayout)findViewById(R.id.wall_hit_holder);
 		status = (TextView)findViewById(R.id.status);
-		CheckBox wallHit = (CheckBox)findViewById(R.id.wall_hit);
 
 		writeStatus("Initialising...");
 
@@ -128,32 +128,17 @@ public class ConnectionActivity extends AppCompatActivity {
 			}
 		});
 
-		wallHit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				try {
-					socketConnection.write(8, new byte[]{(byte) (isChecked ? 1 : 0)});
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
-		licensePlateButton = (Button)findViewById(R.id.read_license_plate);
-		licensePlateButton.setOnClickListener(new View.OnClickListener() {
+		settingsButton = (Button)findViewById(R.id.settings_button);
+		settingsButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				try {
-					socketConnection.write(7, new byte[]{});
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(ConnectionActivity.this);
+				connectionSettingsDialog.show();
 			}
 		});
 
 		if(AUTO_HIDE)
 			hide(); // Automatically hide the controls
-
 
 		video = (MjpegView) findViewById(R.id.videoView);
 		video.setResolution(854, 480);
@@ -328,8 +313,7 @@ public class ConnectionActivity extends AppCompatActivity {
 
 	private void hide() {
 		status.setVisibility(View.GONE);
-		wallHitHolder.setVisibility(View.GONE);
-		licensePlateButton.setVisibility(View.GONE);
+		settingsButton.setVisibility(View.GONE);
 		mVisible = false;
 
 		// Schedule a runnable to remove the status and navigation bar after a delay
@@ -376,20 +360,13 @@ public class ConnectionActivity extends AppCompatActivity {
 	private final Runnable mShowPart2Runnable = new Runnable() {
 		@Override
 		public void run() {
-			licensePlateButton.setVisibility(View.VISIBLE);
+			settingsButton.setVisibility(View.VISIBLE);
 
 			ViewGroup.MarginLayoutParams statusLayoutParams = (ViewGroup.MarginLayoutParams) status.getLayoutParams();
-			//statusLayoutParams.setMargins(0, 0, getSoftbuttonsbarHeight() + 100, 0); // llp.setMargins(left, top, right, bottom);
 			statusLayoutParams.rightMargin = getSoftbuttonsbarHeight();
-
-			ViewGroup.MarginLayoutParams wallHitHolderParams = (ViewGroup.MarginLayoutParams) wallHitHolder.getLayoutParams();
-			//wallHitHolderParams.setMargins(0, 0, getSoftbuttonsbarHeight() + 100, 0); // llp.setMargins(left, top, right, bottom);
-			wallHitHolderParams.rightMargin = getSoftbuttonsbarHeight();
 
 			status.setVisibility(View.VISIBLE);
 			status.setLayoutParams(statusLayoutParams);
-			wallHitHolder.setVisibility(View.VISIBLE);
-			wallHitHolder.setLayoutParams(wallHitHolderParams);
 		}
 	};
 
@@ -456,22 +433,6 @@ public class ConnectionActivity extends AppCompatActivity {
 		});
 	}
 
-	private void wallStopModule(final byte[] value) {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
-			@Override
-			public void run() {
-				CheckBox wallHitCheckbox = (CheckBox)findViewById(R.id.wall_hit);
-
-				if(wallHitCheckbox.isChecked() && value[0] == 0) {
-					wallHitCheckbox.setChecked(false);
-				} else if(!wallHitCheckbox.isChecked() && value[0] == 1) {
-					wallHitCheckbox.setChecked(true);
-				}
-
-			}
-		});
-	}
-
 	class ClientThread implements Runnable {
 
 		@Override
@@ -507,7 +468,7 @@ public class ConnectionActivity extends AppCompatActivity {
                                 }
                                 break;
 							case 8:
-								wallStopModule(data);
+								//wallStopModule(data);
 								break;
 							case 9:
 								Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
