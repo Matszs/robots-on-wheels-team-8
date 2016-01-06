@@ -235,7 +235,7 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 			frame[1] = strlen(client_message);
 			client_message[0] = client_message[0]+'0';
 			snprintf(frame+2, 124, "%s", client_message);
-			printf("%s", frame);
+			if(DEBUG) printf("%s", frame);
 			
 			writeSocket = (int) write(userSocket, frame, 2 + strlen(client_message));
 			
