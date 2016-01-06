@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var wallStopOpt = 8;
     var vibrateOpt = 9;
 
-    var socket = new WebSocket("ws://localhost:1212");
+    var socket = new WebSocket("ws://pi.akoo.nl:1212");
     var sendBuffer = new Uint8Array(new ArrayBuffer(2));
 
     var isOnIOS = navigator.userAgent.match(/iPad/i)|| navigator.userAgent.match(/iPhone/i);
@@ -82,6 +82,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
             case licenseOpt:
                 document.querySelector('.plateInfo').textContent = pld;
+                document.querySelector('.plateInfo').classList.remove('hide');
+                navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+                if (navigator.vibrate) {
+                    navigator.vibrate(300);
+                }
+                window.setTimeout(function(){
+                    document.querySelector('.plateInfo').classList.add('hide');
+                }, 3000);
                 break;
             case wallStopOpt:
                 document.querySelector('.stop input').checked = pld;
