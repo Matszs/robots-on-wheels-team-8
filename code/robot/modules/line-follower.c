@@ -15,9 +15,6 @@
 
 void *lineFollowReader(void *arg);
 
-int lineFollowingEnabled = 0;
-int lineFollowingOnDark = 1;
-
 int fdArduino;
 int dataAvailable;
 int currentCharacter;
@@ -42,13 +39,61 @@ void lineFollowerInit() {
     }
 }
 
+//IR1 = middle front
+//IR2 = right
+//IR3 = middle back
+//IR4 = left
+
+int isRotating = 0;
+
 void lineTracking(int led1, int led2, int led3, int led4) {
-	printf("> %d, %d, %d, %d <\n", led1, led2, led3, led4);
+
+
+	int whiteDetectionLed1 = (led1 > 1);
+	int whiteDetectionLed2 = (led2 > 1);
+	int whiteDetectionLed3 = (led3 > 1);
+	int whiteDetectionLed4 = (led4 > 1);
+
+	printf("> %d, %d, %d, %d <\n", whiteDetectionLed1, whiteDetectionLed2, whiteDetectionLed3, whiteDetectionLed4);
+
+
+	if(!whiteDetectionLed1) {
+		movement direction;
+		unpackMovement((uint8_t)17, &direction);
+		MotorcontrolMovement(&direction);
+		isRotating = 0;
+	} else if(isDriving && !isRotating) {
+		movement direction;
+		unpackMovement((uint8_t)204, &direction);
+        MotorcontrolMovement(&direction);
+        usleep(50000);
+		unpackMovement((uint8_t)0, &direction);
+		MotorcontrolMovement(&direction);
+		isRotating = 1;
+	}
+
+	if(isRotating && whiteDetectionLed1 && !whiteDetectionLed4) {
+		movement direction;
+		unpackMovement((uint8_t)196, &direction);
+		MotorcontrolMovement(&direction);
+		printf("LEFT");
+	}
+
+	if(isRotating && whiteDetectionLed1 && !whiteDetectionLed2) {
+		movement direction;
+		unpackMovement((uint8_t)76, &direction);
+		MotorcontrolMovement(&direction);
+		printf("RIGHT");
+	}
+
+
+
+
 }
 
 void *lineFollowReader(void *arg) {
 	for (;;) {
-		if(!isConnected) { // check if socket connected.
+		if(!isConnected || !lineFollowingEnabled) { // check if socket connected.
 			usleep(100000);
 			continue;
 		}
@@ -93,7 +138,7 @@ void *lineFollowReader(void *arg) {
 				}
 			}
 		}
-		usleep(100000);
+		usleep(10);
 	}
 }
 

@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 
 public class Main  {
     public static void main(String[] args) {
-        SocketClient sc = new SocketClient();
+        SocketClient sc = new SocketClient("pi6.akoo.nl", 1212);
         sc.setUp();
 
 		sc.addListener(new DataReceiveListener() {

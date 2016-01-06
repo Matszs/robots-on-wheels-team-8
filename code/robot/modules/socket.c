@@ -15,7 +15,6 @@ int threatRunning = 0, socketConnection, userSocket; // only one user can connec
 struct sockaddr_in server;
 char GUID[36] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 int web = 0;
-int isConnected = 0;
 pthread_t socketConnectionThread;	// this is our thread identifier
 
 int Base64Encode(const unsigned char* buffer, int length, char** b64text) {

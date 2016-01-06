@@ -9,7 +9,9 @@ void loop() {
   int ir3 = 0;
   int ir4 = 0;
 
-  for (i=0; i<10; i++){
+  int counter = 5;
+
+  for (i=0; i<counter; i++){
     ir1 += analogRead(A0);
     ir2 += analogRead(A1);
     ir3 += analogRead(A2);
@@ -18,10 +20,10 @@ void loop() {
     delay(1);
   }
   
-  ir1 /= 10;
-  ir2 /= 10;
-  ir3 /= 10;
-  ir4 /= 10;
+  ir1 /= counter;
+  ir2 /= counter;
+  ir3 /= counter;
+  ir4 /= counter;
 
   Serial.print("\x02");
   Serial.print(ir1);

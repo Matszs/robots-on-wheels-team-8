@@ -15,7 +15,7 @@ int lastSpeedRight = -1;
 int lastDirectionLeft = -1;
 int lastDirectionRight = -1;
 //uint8_t speedTable[7] = {0, 4, 8, 12, 16, 20, 24};
-uint8_t speedTable[7] = {0, 8, 16, 24, 32, 40, 48};
+uint8_t speedTable[7] = {0, 40, 70, 90, 110, 130, 150};
 int ledLeftPin = 10;
 int ledRightPin = 11;
 
@@ -25,6 +25,7 @@ typedef struct {
 } movement;
 
 int writeData(uint8_t * data, int lenght){
+printf("write data");
 	return writeDataRec(data, lenght, 0);
 }
 
@@ -98,14 +99,14 @@ void MotorcontrolMovement(movement *direction){
         MotorC[6] = 0;
         isDriving = 0;
 
+        lastSpeedLeft = lastSpeedRight = 0;
+
         printf("Engine: STOP \n");
         writeData(&MotorC[0], 7);
 		digitalWrite(ledRightPin, 0);
 		digitalWrite(ledLeftPin, 0);
 
     } else {
-        printf("STOP: %d \n", hasToStop);
-
         if(automaticStop && hasToStop && (richtingLinks == 2 || richtingRechts == 2)) {
             printf("No forward\n");
             if(isDriving == 1)
@@ -115,8 +116,6 @@ void MotorcontrolMovement(movement *direction){
             //if(DEBUG)
             if(lastSpeedLeft != speedTable[rotationSpeedLeft] || lastSpeedRight != speedTable[rotationSpeedRight] || lastDirectionLeft != (rotationSpeedLeft == 0 ? 0 : richtingLinks) || lastDirectionRight != (rotationSpeedRight == 0 ? 0 : richtingRechts)) {
 
-                printf("lft; %d, rgh; %d\n", speedTable[rotationSpeedLeft], speedTable[rotationSpeedRight]);
-
                 MotorC[0] = 7;
                 MotorC[1] = 3;
                 MotorC[2] = lastSpeedLeft = speedTable[rotationSpeedLeft];
@@ -125,7 +124,8 @@ void MotorcontrolMovement(movement *direction){
                 MotorC[5] = lastSpeedRight = speedTable[rotationSpeedRight];
                 MotorC[6] = lastDirectionRight = (rotationSpeedRight == 0 ? 0 : richtingRechts);
                 isDriving = 1;
-				printf(" left: %d, right: %d \n", lastSpeedLeft, lastSpeedRight);
+
+				printf(" left: %d, right: %d \n", MotorC[2], MotorC[5]);
 
 				if(lastSpeedLeft > lastSpeedRight){
 					printf("right");
