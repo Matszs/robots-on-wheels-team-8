@@ -76,8 +76,8 @@ void socketInit() {
 	//start listening in other thread
 	if (!threatRunning){
 		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
+		sleep(5);
 	}
-	sleep(5);
 	//
 	//	writeToSocket(6, "180");
 	//	writeToSocket(3, "123");
@@ -106,8 +106,12 @@ void *listenForConnections(void *arg) {
 		if (tmpUserSocket == -1)
 			printf("accept failed\n");
 		
-		if(userSocket >= 0) // if there is already a socket connected, disconnect
+		if(userSocket >= 0){
 			close(userSocket);
+			readSize = 1024;
+			authenticated = 0;
+			web = 0;
+		}// if there is already a socket connected, disconnect
 		
 		userSocket = tmpUserSocket;
 		
@@ -135,6 +139,9 @@ void *listenForConnections(void *arg) {
 					readSize = 9;
 					web = 1;
 					continue;
+				}else{
+					readSize = 2;
+					authenticated = 1;
 				}
 			}
 			
@@ -189,6 +196,7 @@ void *listenForConnections(void *arg) {
 		
 		readSize = 1024;
 		authenticated = 0;
+		web = 0;
 		
 		socketInit();
 		onDisconnect();
@@ -227,7 +235,7 @@ void writeToSocket(uint8_t opcode, char *commandData) {
 			frame[1] = strlen(client_message);
 			client_message[0] = client_message[0]+'0';
 			snprintf(frame+2, 124, "%s", client_message);
-			printf("%s", frame);
+			if(DEBUG) printf("%s", frame);
 			
 			writeSocket = (int) write(userSocket, frame, 2 + strlen(client_message));
 			
