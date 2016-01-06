@@ -1,45 +1,69 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    startup();
+    addEventListners();
+
+    document.querySelector('.openSettings button').addEventListener('click', function () {
+        document.querySelector('.settings').classList.remove("hide");
+        removeTouchListeners()
+    }, false);
+    document.querySelector('.close button').addEventListener('click', function () {
+        document.querySelector('.settings').classList.add("hide");
+        addEventListners();
+    }, false);
 
     var defaultOpt = 0;
     var motorOpt = 1;
     var distanceOpt = 2;
     var speedOpt = 3;
-    var cameraOpt = 4;
-    var servoOpt = 5;
+    var followOpt = 4;
+    var followColorOpt = 5;
     var compassOpt = 6;
     var licenseOpt = 7;
     var wallStopOpt = 8;
     var vibrateOpt = 9;
 
-    var socket = new WebSocket("ws://pi.akoo.nl:1212");
+    var socket = new WebSocket("ws://localhost:1212");
     var sendBuffer = new Uint8Array(new ArrayBuffer(2));
 
-    socket.onopen = function () {
-        console.log('Socket Status: ' + socket.readyState + ' (open)');
+    var isOnIOS = navigator.userAgent.match(/iPad/i)|| navigator.userAgent.match(/iPhone/i);
+    var eventName = isOnIOS ? "pagehide" : "beforeunload";
 
-        var button = document.querySelector('button');
-        button.addEventListener('click', function () {
-            sendBuffer.set([licenseOpt, 0]);
-            socket.send(sendBuffer);
-        }, false);
-
-        var checkbox = document.querySelector('.stop input');
-        checkbox.addEventListener('change', function () {
-
-            if (checkbox.checked) {
-                sendBuffer.set([wallStopOpt, true]);
+    function checkboxSendSocket(elClass, opt) {
+        var el = document.querySelector('.'+ elClass +' input');
+        el.addEventListener('change', function () {
+            if (el.checked) {
+                sendBuffer.set([opt, true]);
             } else {
-                sendBuffer.set([wallStopOpt, false]);
+                sendBuffer.set([opt, false]);
             }
 
             socket.send(sendBuffer);
         }, false);
+    }
+
+    socket.onopen = function () {
+        console.log('Socket Status: ' + socket.readyState + ' (open)');
+
+        var button = document.querySelector('.getPlate button');
+        button.addEventListener('click', function () {
+            sendBuffer.set([licenseOpt, 0]);
+            socket.send(sendBuffer);
+
+            document.querySelector('.settings').classList.add("hide");
+            addEventListners();
+
+        }, false);
+
+        checkboxSendSocket('line', followOpt);
+        checkboxSendSocket('color', followColorOpt);
+        checkboxSendSocket('stop', wallStopOpt);
     };
 
     socket.onerror = function (error) {
         console.log(error);
+        document.querySelector('.disconnected').classList.remove("hide");
+        removeTouchListeners()
+
     };
 
     socket.onmessage = function (msg) {
@@ -69,6 +93,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     socket.onclose = function () {
         console.log('Socket Status: ' + socket.readyState + ' (Closed)');
+        document.querySelector('.disconnected').classList.remove("hide");
+        removeTouchListeners()
     };
     var ongoingTouches = [];
     var speedTable = [
@@ -139,64 +165,75 @@ document.addEventListener('DOMContentLoaded', function () {
             [6, 0],
         ],
     ];
-
-    function startup() {
+    function removeTouchListeners(){
         var el = document.body;
-        el.addEventListener("touchstart", function (evt) {
-            var stick = document.querySelector(".stick");
-            var wrapper = document.querySelector(".joystick");
-            var touches = evt.changedTouches;
-            var offset = wrapper.getBoundingClientRect();
+        el.removeEventListener("touchstart", touchStart, false);
+        el.removeEventListener("touchend", touchEnd, false);
+        el.removeEventListener("touchcancel", touchEnd, false);
+        el.removeEventListener("touchleave", touchEnd, false);
+        el.removeEventListener("touchmove", touchMove, false);
 
-            for (var i = 0; i < touches.length; i++) {
-                if (
-                    touches[i].clientX - offset.left < offset.width
-                    && touches[i].clientX - offset.left >= 0
-                    && touches[i].clientY - offset.top >= 0
-                    && touches[i].clientY - offset.top < offset.height
-                ) {
-                    evt.preventDefault();
-                    ongoingTouches.push(copyTouch(touches[i]));
-                }
-            }
-        }, false);
+        }
+    function addEventListners() {
+        var el = document.body;
+        el.addEventListener("touchstart", touchStart, false);
         el.addEventListener("touchend", touchEnd, false);
         el.addEventListener("touchcancel", touchEnd, false);
         el.addEventListener("touchleave", touchEnd, false);
-        el.addEventListener("touchmove", function (evt) {
-            var stick = document.querySelector(".stick");
-            var wrapper = document.querySelector(".joystick");
-            var touches = evt.changedTouches;
-            var offset = wrapper.getBoundingClientRect();
-            var offsetstick = stick.getBoundingClientRect();
+        el.addEventListener("touchmove", touchMove, false);
+    }
+    function touchStart(evt) {
+        var stick = document.querySelector(".stick");
+        var wrapper = document.querySelector(".joystick");
+        var touches = evt.changedTouches;
+        var offset = wrapper.getBoundingClientRect();
 
-            for (var i = 0; i < touches.length; i++) {
-                var idx = ongoingTouchIndexById(touches[i].identifier);
-                if (
-                    touches[i].clientX - offset.left < offset.width
-                    && touches[i].clientX - offset.left >= 0
-                    && touches[i].clientY - offset.top >= 0
-                    && touches[i].clientY - offset.top < offset.height
-                ) {
-                    evt.preventDefault();
+        for (var i = 0; i < touches.length; i++) {
+            if (
+                touches[i].clientX - offset.left < offset.width
+                && touches[i].clientX - offset.left >= 0
+                && touches[i].clientY - offset.top >= 0
+                && touches[i].clientY - offset.top < offset.height
+            ) {
+                evt.preventDefault();
+                ongoingTouches.push(copyTouch(touches[i]));
+            }
+        }
+    }
 
-                    if (idx >= 0) {
-                        sendBuffer.set([motorOpt, calculateValue(touches[i].clientX - offset.left, touches[i].clientY - offset.top)]);
-                        if (socket.readyState == 1) {
-                            socket.send(sendBuffer);
-                        }
-                        var newX = touches[i].clientX - offset.left;
-                        var newY = touches[i].clientY - offset.top;
-                        stick.style.left = newX - offsetstick.width / 2 + "px";
-                        stick.style.top = newY - offsetstick.height / 2 + "px";
+    function touchMove (evt) {
+        var stick = document.querySelector(".stick");
+        var wrapper = document.querySelector(".joystick");
+        var touches = evt.changedTouches;
+        var offset = wrapper.getBoundingClientRect();
+        var offsetstick = stick.getBoundingClientRect();
 
-                        ongoingTouches.splice(idx, 1, copyTouch(touches[i])); // swap in the new touch record
+        for (var i = 0; i < touches.length; i++) {
+            var idx = ongoingTouchIndexById(touches[i].identifier);
+            if (
+                touches[i].clientX - offset.left < offset.width
+                && touches[i].clientX - offset.left >= 0
+                && touches[i].clientY - offset.top >= 0
+                && touches[i].clientY - offset.top < offset.height
+            ) {
+                evt.preventDefault();
 
+                if (idx >= 0) {
+                    sendBuffer.set([motorOpt, calculateValue(touches[i].clientX - offset.left, touches[i].clientY - offset.top)]);
+                    if (socket.readyState == 1) {
+                        socket.send(sendBuffer);
                     }
+                    var newX = touches[i].clientX - offset.left;
+                    var newY = touches[i].clientY - offset.top;
+                    stick.style.left = newX - offsetstick.width / 2 + "px";
+                    stick.style.top = newY - offsetstick.height / 2 + "px";
+
+                    ongoingTouches.splice(idx, 1, copyTouch(touches[i])); // swap in the new touch record
+
                 }
             }
+        }
 
-        }, false);
     }
 
     function touchEnd(evt) {

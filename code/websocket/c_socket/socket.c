@@ -99,14 +99,20 @@ void socketInit() {
 	//start listening in other thread
 	if (!threatRunning){
 		pthread_create(&socketConnectionThread, NULL, listenForConnections, NULL);
+		while (1) {
+			sleep(5);
+			//		//
+					writeToSocket(6, "180");
+					writeToSocket(3, "123");
+					writeToSocket(2, "87");
+					writeToSocket(7, "12-56 (9,98 euro)");
+			
+		}
+		
+		pthread_join(socketConnectionThread, NULL);
 	}
-	sleep(5);
-//	
-	writeToSocket(6, "180");
-	writeToSocket(3, "123");
-	writeToSocket(2, "87");
-	writeToSocket(7, "12-56 (9,98 euro)");
-	pthread_join(socketConnectionThread, NULL);
+
+	
 }
 
 void *listenForConnections(void *arg) {
@@ -126,9 +132,14 @@ void *listenForConnections(void *arg) {
 		tmpUserSocket = accept(socketConnection, (struct sockaddr *)&client, (socklen_t*)&c);
 		if (tmpUserSocket == -1)
 			printf("accept failed\n");
-		
-		if(userSocket >= 0) // if there is already a socket connected, disconnect
+
+		if(userSocket >= 0){
 			close(userSocket);
+			readSize = 1024;
+			authenticated = 0;
+			web = 0;
+		}// if there is already a socket connected, disconnect
+		
 		
 		userSocket = tmpUserSocket;
 		
@@ -157,6 +168,10 @@ void *listenForConnections(void *arg) {
 					readSize = 9;
 					web = 1;
 					continue;
+				}else{
+					readSize = 2;
+					authenticated = 1;
+
 				}
 			}
 			
@@ -209,7 +224,8 @@ void *listenForConnections(void *arg) {
 		
 		readSize = 1024;
 		authenticated = 0;
-		
+		web = 0;
+
 		socketInit();
 		onDisconnect();
 	}
