@@ -14,8 +14,6 @@
 #define OPT_MOTOR						1
 #define OPT_DISTANCE					2
 #define OPT_SPEED						3
-#define OPT_LINE_FOLLOWING				4
-#define OPT_LINE_FOLLOWING_COLOUR		5
 #define OPT_COMPASS						6
 #define OPT_WALL_STOP					8
 #define OPT_VIBRATE						9
@@ -39,8 +37,6 @@ int automaticStop = 0;
 int isDriving = 0;
 int hasToStop = 0;
 int isConnected = 0;
-int lineFollowingEnabled = 0;
-int lineFollowingOnDark = 1;
 //#include  "rpiGpio.h" // remove when WiringPi fully included
 
 #include  <softPwm.h>
@@ -53,7 +49,6 @@ int lineFollowingOnDark = 1;
 #include "modules/servo.c"
 #include "modules/wall-stop.c"
 #include "modules/license_plate.c"
-#include "modules/line-follower.c"
 
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0); // display printf's
@@ -70,7 +65,6 @@ void run() {
 	compassInit();
 	wallStopInit();
 	licensePlateInit();
-	lineFollowerInit();
 //	servoInit();
 
     while(1) {
@@ -106,10 +100,6 @@ void onCommand(uint8_t opcode, char *commandData) {
 	    printf("stop: %d", automaticStop);
 	} else if(opcode == OPT_LICENSE) {
 		licensePlateReader();
-	} else if(opcode == OPT_LINE_FOLLOWING) {
-		lineFollowingEnabled = (uint8_t)(commandData[0]);
-	} else if(opcode == OPT_LINE_FOLLOWING_COLOUR) {
-		lineFollowingOnDark = (uint8_t)(commandData[0]);
 	}
 	// TODO: add engine ...
 }

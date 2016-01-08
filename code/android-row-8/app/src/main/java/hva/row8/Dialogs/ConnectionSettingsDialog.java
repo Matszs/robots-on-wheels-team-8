@@ -56,30 +56,6 @@ public class ConnectionSettingsDialog extends Dialog {
             }
         });
 
-        final CheckBox lineFollowing = (CheckBox)findViewById(R.id.line_following);
-        lineFollowing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                try {
-                    activity.socketConnection.write(4, new byte[]{ (byte)(lineFollowing.isChecked() ? 1 : 0) });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        final CheckBox lineFollowingColour = (CheckBox)findViewById(R.id.line_following_color);
-        lineFollowingColour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                try {
-                    activity.socketConnection.write(5, new byte[]{ (byte)(lineFollowingColour.isChecked() ? 1 : 0) });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
         Button closeButton = (Button)findViewById(R.id.close_settings_button);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
