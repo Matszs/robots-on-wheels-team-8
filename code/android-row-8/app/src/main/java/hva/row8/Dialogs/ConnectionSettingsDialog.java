@@ -68,7 +68,7 @@ public class ConnectionSettingsDialog extends Dialog {
             }
         });
 
-        final CheckBox lineFollowingColour = (CheckBox)findViewById(R.id.line_following);
+        final CheckBox lineFollowingColour = (CheckBox)findViewById(R.id.line_following_color);
         lineFollowingColour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

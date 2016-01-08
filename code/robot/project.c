@@ -10,16 +10,16 @@
 #define PORT_NUMBER		1212
 #define DEBUG			0
 
-#define OPT_DEFAULT		0
-#define OPT_MOTOR		1
-#define OPT_DISTANCE	2
-#define OPT_SPEED		3
-#define OPT_CAMERA		4
-#define OPT_SERVO		5
-#define OPT_COMPASS		6
-#define OPT_WALL_STOP	8
-#define OPT_VIBRATE		9
-#define OPT_LICENSE		7
+#define OPT_DEFAULT						0
+#define OPT_MOTOR						1
+#define OPT_DISTANCE					2
+#define OPT_SPEED						3
+#define OPT_LINE_FOLLOWING				4
+#define OPT_LINE_FOLLOWING_COLOUR		5
+#define OPT_COMPASS						6
+#define OPT_WALL_STOP					8
+#define OPT_VIBRATE						9
+#define OPT_LICENSE						7
 
 #include <stdio.h>
 #include <string.h> //strlen
@@ -38,6 +38,9 @@
 int automaticStop = 0;
 int isDriving = 0;
 int hasToStop = 0;
+int isConnected = 0;
+int lineFollowingEnabled = 0;
+int lineFollowingOnDark = 1;
 //#include  "rpiGpio.h" // remove when WiringPi fully included
 
 #include  <softPwm.h>
@@ -67,7 +70,7 @@ void run() {
 	compassInit();
 	wallStopInit();
 	licensePlateInit();
-	//lineFollowerInit();
+	lineFollowerInit();
 //	servoInit();
 
     while(1) {
@@ -103,6 +106,10 @@ void onCommand(uint8_t opcode, char *commandData) {
 	    printf("stop: %d", automaticStop);
 	} else if(opcode == OPT_LICENSE) {
 		licensePlateReader();
+	} else if(opcode == OPT_LINE_FOLLOWING) {
+		lineFollowingEnabled = (uint8_t)(commandData[0]);
+	} else if(opcode == OPT_LINE_FOLLOWING_COLOUR) {
+		lineFollowingOnDark = (uint8_t)(commandData[0]);
 	}
 	// TODO: add engine ...
 }

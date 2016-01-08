@@ -67,13 +67,18 @@ public class SocketClient {
         this.socket.close();
     }
 
-	public void write(int module, byte[] data) throws Exception {
+	/*public void write(int module, byte[] data) throws Exception {
 		byte[] dataToWrite = new byte[data.length + 1];
 
 		System.arraycopy(new byte[]{ (byte)module }, 0, dataToWrite, 0, 1); // concat data
 		System.arraycopy(data, 0, dataToWrite, 1, data.length); // concat data
 
 		this.outputStream.write(dataToWrite);
+		this.outputStream.flush();
+	}*/
+
+	public void write(int module, byte[] data) throws Exception {
+		this.outputStream.write(data);
 		this.outputStream.flush();
 	}
 
