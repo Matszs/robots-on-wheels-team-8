@@ -114,12 +114,14 @@ void MotorcontrolMovement(movement *direction){
             isDriving = 0;
         } else {
             //if(DEBUG)
-            if(lastSpeedLeft != speedTable[rotationSpeedLeft] || lastSpeedRight != speedTable[rotationSpeedRight] || lastDirectionLeft != (rotationSpeedLeft == 0 ? 0 : richtingLinks) || lastDirectionRight != (rotationSpeedRight == 0 ? 0 : richtingRechts)) {
+			uint8_t newDirectionLeft = (rotationSpeedLeft == 0 ? 0 : richtingLinks);
+			uint8_t newDirectionRight = (rotationSpeedRight == 0 ? 0 : richtingRechts);
+            if(lastSpeedLeft != speedTable[rotationSpeedLeft] || lastSpeedRight != speedTable[rotationSpeedRight] || lastDirectionLeft != newDirectionLeft || lastDirectionRight != newDirectionRight) {
 
                 MotorC[0] = 7;
                 MotorC[1] = 3;
                 MotorC[2] = lastSpeedLeft = speedTable[rotationSpeedLeft];
-                MotorC[3] = lastDirectionLeft = (rotationSpeedLeft == 0 ? 0 : richtingLinks);
+                MotorC[3] = lastDirectionLeft = newDirectionLeft;
                 MotorC[4] = 3;
                 MotorC[5] = lastSpeedRight = speedTable[rotationSpeedRight];
                 MotorC[6] = lastDirectionRight = (rotationSpeedRight == 0 ? 0 : richtingRechts);

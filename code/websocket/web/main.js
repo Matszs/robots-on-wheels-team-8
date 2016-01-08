@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }, false);
 
-        checkboxSendSocket('line', followOpt);
-        checkboxSendSocket('color', followColorOpt);
+        //checkboxSendSocket('line', followOpt);
+        //checkboxSendSocket('color', followColorOpt);
         checkboxSendSocket('stop', wallStopOpt);
     };
 
