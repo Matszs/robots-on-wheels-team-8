@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 sendBuffer.set([opt, false]);
             }
+            console.log('sfafd', el.checked, sendBuffer);
 
             socket.send(sendBuffer);
         }, false);
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 3000);
                 break;
             case wallStopOpt:
-                document.querySelector('.stop input').checked = pld;
+                //document.querySelector('.stop input').checked = pld;
                 break
         }
 
