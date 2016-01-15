@@ -1,15 +1,21 @@
 package hva.row8;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,23 +25,40 @@ import android.support.v4.app.NavUtils;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.Calendar;
 
 import hva.row8.Classes.Calculation;
 import hva.row8.Classes.Connection;
+import hva.row8.Dialogs.ConnectionEditDialog;
+import hva.row8.Dialogs.ConnectionSettingsDialog;
 import hva.row8.Interfaces.DataReceiveListener;
 import hva.row8.Interfaces.MoveListener;
 import hva.row8.Modules.Joystick;
 import hva.row8.Modules.SocketClient;
+import hva.row8.Modules.Stream.MjpegInputStream;
+import hva.row8.Modules.Stream.MjpegView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -51,9 +74,11 @@ public class ConnectionActivity extends AppCompatActivity {
 	public Application application;
 	private Connection connection;
 	private float lastCompassRotation = 0;
-	SocketClient socketConnection;
+	public SocketClient socketConnection;
 	private boolean mVisible;
 	private TextView status;
+	private Button settingsButton;
+
     private boolean isActive = false;
 
 	private final Handler mHideHandler = new Handler();
@@ -68,6 +93,7 @@ public class ConnectionActivity extends AppCompatActivity {
 	private int yHolder;
 
 	private Joystick joystick;
+	private MjpegView video = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,27 +128,21 @@ public class ConnectionActivity extends AppCompatActivity {
 			}
 		});
 
-		hide(); // Automatically hide the controls
+		settingsButton = (Button)findViewById(R.id.settings_button);
+		settingsButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(ConnectionActivity.this);
+				connectionSettingsDialog.show();
+			}
+		});
 
-		VideoView videoView = (VideoView)findViewById(R.id.video_view);
-		//Uri UriSrc = Uri.parse("http://" + connection.ip + ":8090");
-		Uri UriSrc = Uri.parse("rtsp://" + connection.ip + ":8554/unicast");
-		videoView.setVideoURI(UriSrc);
-		// Capture error message by a toast, more user friendly.
-		videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-			@Override
-			public boolean onError(MediaPlayer mp, int what, int extra) {
-				Toast.makeText(ConnectionActivity.this, "Cannot play video.", Toast.LENGTH_SHORT).show();
-				return true;
-			}
-		});
-		videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-			@Override
-			public void onPrepared(MediaPlayer mp) {
-				videoOverlay.setVisibility(View.INVISIBLE);
-			}
-		});
-		videoView.start();
+		if(AUTO_HIDE)
+			hide(); // Automatically hide the controls
+
+		video = (MjpegView) findViewById(R.id.videoView);
+		video.setResolution(854, 480);
+		new streamOpener().execute("http://" + connection.ip + ":8080/?action=stream");
 
 		joyStickInit();
 
@@ -135,7 +155,24 @@ public class ConnectionActivity extends AppCompatActivity {
         isActive = true;
     }
 
-    private void displayLicensePlateToast(final String text) {
+    private void displayLicensePlateToast(byte[] textData) {
+
+		int i;
+		for (i = 0; i < textData.length && textData[i] != 0; i++);
+
+		String text;
+		try {
+			text = new String(textData, 0, i, "us-ascii");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
+		final String textFormatted = text.replaceAll("\\s+","");
+
+		if(textFormatted.isEmpty())
+			return;
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -143,15 +180,62 @@ public class ConnectionActivity extends AppCompatActivity {
                 View layout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_layout_root));
 
                 TextView numberPlateText = (TextView) layout.findViewById(R.id.number_plate);
-                numberPlateText.setText(text);
+                numberPlateText.setText(textFormatted);
 
                 Toast toast = new Toast(getApplicationContext());
                 toast.setGravity(Gravity.BOTTOM, 0, 100);
+				toast.setDuration(Toast.LENGTH_LONG);
+				toast.setView(layout);
+				toast.show();
+
+				Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				mVibrator.vibrate(300);
+			}
+		});
+	}
+
+	private void displayLicensePlateToast(final String text) {
+		final String textFormatted = text.replaceAll("\\s+","");
+
+		if(textFormatted.isEmpty())
+			return;
+
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+				LayoutInflater inflater = getLayoutInflater();
+				View layout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+
+				TextView numberPlateText = (TextView) layout.findViewById(R.id.number_plate);
+				numberPlateText.setText(textFormatted);
+
+				Toast toast = new Toast(getApplicationContext());
+				toast.setGravity(Gravity.BOTTOM, 0, 100);
 				toast.setDuration(Toast.LENGTH_SHORT);
 				toast.setView(layout);
 				toast.show();
+
+				Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				mVibrator.vibrate(300);
 			}
 		});
+	}
+
+	@SuppressLint("NewApi")
+	private int getSoftbuttonsbarHeight() {
+		// getRealMetrics is only available with API 17 and +
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			int usableHeight = metrics.widthPixels;
+			getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+			int realHeight = metrics.widthPixels;
+			if (realHeight > usableHeight)
+				return realHeight - usableHeight;
+			else
+				return 0;
+		}
+		return 0;
 	}
 
 	public void writeStatus(String statusText) {
@@ -164,12 +248,29 @@ public class ConnectionActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		VideoView videoView = (VideoView)findViewById(R.id.video_view);
-		videoView.stopPlayback();
         isActive = false;
+
+		if (video != null) {
+			video.freeCameraMemory();
+		}
+
         try {
             socketConnection.stop();
         } catch (Exception e) {}
+	}
+
+	public void onPause() {
+		super.onPause();
+		if (video != null) {
+			if (video.isStreaming()) {
+				video.stopPlayback();
+				//suspending = true;
+			}
+		}
+	}
+
+	public void setImageError() {
+
 	}
 
 	protected void joyStickInit() {
@@ -179,12 +280,12 @@ public class ConnectionActivity extends AppCompatActivity {
 		joystick = new Joystick(ConnectionActivity.this, joystickContainer, joystickAnalog);
         joystick.bind();
         joystick.addListener(new MoveListener() {
-            @Override
-            public void onMove(int x, int y) {
-                int value = Calculation.calculateValue(x, y);
-                try {
-                    System.out.println("Value: " + value);
-                    socketConnection.write(1, new byte[]{(byte) value});
+			@Override
+			public void onMove(int x, int y) {
+				int value = Calculation.calculateValue(x, y);
+				try {
+					System.out.println("Value: " + value);
+					socketConnection.write(1, new byte[]{(byte) value});
 				} catch (Exception e) {
 
 				}
@@ -211,11 +312,8 @@ public class ConnectionActivity extends AppCompatActivity {
 	}
 
 	private void hide() {
-		/*ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.hide();
-		}*/
 		status.setVisibility(View.GONE);
+		settingsButton.setVisibility(View.GONE);
 		mVisible = false;
 
 		// Schedule a runnable to remove the status and navigation bar after a delay
@@ -231,13 +329,14 @@ public class ConnectionActivity extends AppCompatActivity {
 
 			// Note that some of these constants are new as of API 16 (Jelly Bean)
 			// and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
+			// at compile-time and do nothing on earlier devices.
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
 		}
 	};
 
@@ -249,8 +348,8 @@ public class ConnectionActivity extends AppCompatActivity {
 	@SuppressLint("InlinedApi")
 	private void show() {
 		// Show the system bar
-		mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+		mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
 		mVisible = true;
 
 		// Schedule a runnable to display UI elements after a delay
@@ -261,12 +360,13 @@ public class ConnectionActivity extends AppCompatActivity {
 	private final Runnable mShowPart2Runnable = new Runnable() {
 		@Override
 		public void run() {
-			// Delayed display of UI elements
-			/*ActionBar actionBar = getSupportActionBar();
-			if (actionBar != null) {
-				actionBar.show();
-			}*/
+			settingsButton.setVisibility(View.VISIBLE);
+
+			ViewGroup.MarginLayoutParams statusLayoutParams = (ViewGroup.MarginLayoutParams) status.getLayoutParams();
+			statusLayoutParams.rightMargin = getSoftbuttonsbarHeight();
+
 			status.setVisibility(View.VISIBLE);
+			status.setLayoutParams(statusLayoutParams);
 		}
 	};
 
@@ -342,7 +442,12 @@ public class ConnectionActivity extends AppCompatActivity {
                 @Override
                 public void onDataReceive(int module, byte[] data) {
                     try {
-                        writeStatus("Connected");
+						new Handler(Looper.getMainLooper()).post(new Runnable() {
+							@Override
+							public void run() {
+								writeStatus("Connected");
+							}
+						});
                         //System.out.println("Module: " + module);
                         //System.out.println("Data: " + new String(data, "UTF-8"));
                         switch (module) {
@@ -357,11 +462,18 @@ public class ConnectionActivity extends AppCompatActivity {
                                 break;
                             case 7:
                                 try {
-                                    displayLicensePlateToast(new String(data, "UTF-8"));
+                                    displayLicensePlateToast(data);
                                 } catch (Exception e) {
                                     displayLicensePlateToast("ERROR!");
                                 }
                                 break;
+							case 8:
+								//wallStopModule(data);
+								break;
+							case 9:
+								Vibrator mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+								mVibrator.vibrate((int)data[0] * 100);
+								break;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -399,6 +511,46 @@ public class ConnectionActivity extends AppCompatActivity {
                 }
             });
 			socketConnection.setUp();
+		}
+	}
+
+
+	public class streamOpener extends AsyncTask<String, Void, MjpegInputStream> {
+		protected MjpegInputStream doInBackground(String... url) {
+			//TODO: if camera has authentication deal with it and don't just not work
+			HttpResponse res = null;
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			HttpParams httpParams = httpclient.getParams();
+			HttpConnectionParams.setConnectionTimeout(httpParams, 5 * 1000);
+			HttpConnectionParams.setSoTimeout(httpParams, 5 * 1000);
+			try {
+				res = httpclient.execute(new HttpGet(URI.create(url[0])));
+				if (res.getStatusLine().getStatusCode() == 401) {
+					//You must turn off camera User Access Control before this will work
+					return null;
+				}
+				return new MjpegInputStream(res.getEntity().getContent());
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+				//Error connecting to camera
+			} catch (IOException e) {
+				e.printStackTrace();
+				//Error connecting to camera
+			}
+			return null;
+		}
+
+		protected void onPostExecute(MjpegInputStream result) {
+			video.setSource(result);
+			if (result != null) {
+				result.setSkip(1);
+				videoOverlay.setVisibility(View.INVISIBLE);
+				System.out.println("Camera; Connect");
+			} else {
+				System.out.println("Camera; Disconnect");
+			}
+			video.setDisplayMode(MjpegView.SIZE_BEST_FIT);
+			video.showFps(false);
 		}
 	}
 }

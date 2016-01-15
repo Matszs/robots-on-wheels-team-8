@@ -1,0 +1,225 @@
+html, body {
+    /*overflow-x: hidden;*/
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+body {
+    /*position: relative*/
+}
+
+.container{
+    height: 100vh;
+    background: #ddd;
+}
+.joystick-container {
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+}
+.joystick{
+    background: #f6f6f6;
+    width: 10em;
+    height: 10em;
+    bottom: 0;
+    position: absolute;
+}
+.stick{
+    position: relative;
+    background: #b3b8bb;
+    width: 30%;
+    height: 30%;
+    top: 35%;
+    left: 35%;
+}
+.joystick-container div{
+    box-sizing: border-box;
+    float: left;
+    border-radius: 100%;
+
+}
+button{
+    background: #f6f6f6;
+    border: 0;
+    width: 100px;
+    height: 30px;
+    font-size: 15px;
+}
+.info{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #f6f6f6;
+    width: 100px;
+    text-align: right;
+    /*border-bottom-left-radius: 10px;*/
+}
+.hide{
+    display: none;
+    transition: all 0.3s ease 0s;
+
+}
+.info{
+    padding: 5px;
+}
+.plate *{
+    margin-left: -50%;
+}
+.plate{
+    position: absolute;
+    bottom: 5px;
+    left: 50vw;
+}
+.plateInfo{
+    background: #ddb108;
+    height: 50px;
+    text-align: center;
+    padding: 10px 10px 10px 50px;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 23px;
+    width: 260px;
+    border-radius: 10px
+}
+.plateInfo:before{
+    content: "NL";
+    background: #326fb2;
+    width: 50px;
+    height: 50px;
+    color: #fff;
+    display: block;
+    margin-left: -50px;
+    margin-top: -10px;
+    float: left;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 10px
+}
+.compass{
+    position: absolute;
+    top:5px;
+    left: 5px;
+    height: 40vh;
+    width: auto;
+}
+.compass img{
+    width: inherit;
+    height: inherit;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+}
+.onoffswitch {
+    display: inline-block;
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.1s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 20px; padding: 0; line-height: 20px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+
+.onoffswitch-inner:before {
+    content: "ON";
+    padding-left: 10px;
+    background-color: #000000; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "OFF";
+    padding-right: 10px;
+    background-color: #FFFFFF; color: #999999;
+    text-align: right;
+}
+
+.onoffswitch-inner.dark:before {
+    content: "Dark";
+}
+.onoffswitch-inner.dark:after {
+    content: "Light";
+}
+.onoffswitch-switch {
+    display: block; width: 18px; margin: 1px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 66px;
+    border: 2px solid #999999; border-radius: 20px;
+    transition: all 0.1s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+.openSettings {
+    position: absolute;
+    bottom: 5px;
+    left: 50vw;
+}
+.openSettings button{
+    margin-left: -50%;
+}
+.settings{
+    background: #fff;
+    position: absolute;
+    z-index: 10;
+    top: 15%;
+    left: 25%;
+    width: 50%;
+    height: 70%;
+}
+.settings>div{
+    padding: 5px 0 0 5px;
+}
+.settings button{
+    margin: 10px;
+    background: #999;
+}
+.close{
+    position: absolute;
+    left: 50%;
+
+}
+.close button{
+    margin-left: -50%;
+}
+.disconnected{
+    background: #000;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    text-align: center;
+    padding-top: 45vh;
+    font-size: 20px;
+    box-sizing: border-box;
+}
+
+.stream{
+    width: 100vw;
+}
+button.getPlate{
+    color: #fff;
+}

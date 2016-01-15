@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
+</head>
+<body>
+
+<div class="container">
+    <img class="stream" src="http://pi.akoo.nl:8080/?action=stream" alt="">
+    <div class="compass"><img src="./compass.png" alt=""></div>
+    <div class="joystick-container">
+        <div class="joystick">
+            <div class="stick" draggable="true">&nbsp;</div>
+        </div>
+    </div>
+    <div class="openSettings">
+        <button>settings</button>
+    </div>
+    <div class="plate">
+        <div class="hide plateInfo"></div>
+    </div>
+    <div class="info">
+        <div class="speed"><span></span>m/s</div>
+        <div class="dis"><span></span>cm</div>
+    </div>
+</div>
+<div class="settings hide">
+    <div class="stop">
+        Auto wall stop:
+
+        <!--<div class="onoffswitch">-->
+            <input type="checkbox" id="wallstop" >
+            <!--<label class="onoffswitch-label" for="wallstop">-->
+                <!--<span class="onoffswitch-inner"></span>-->
+                <!--<span class="onoffswitch-switch"></span>-->
+            <!--</label>-->
+        <!--</div>-->
+    </div>
+    <div class="getPlate">Read license plate: <button class="getPlate"><i class="fa fa-search"></i></button></div>
+
+    <!--<div class="line">-->
+        <!--Auto follow line:-->
+
+        <!--<div class="onoffswitch">-->
+        <!--<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="followLine">-->
+        <!--<label class="onoffswitch-label" for="followLine">-->
+            <!--<span class="onoffswitch-inner"></span>-->
+            <!--<span class="onoffswitch-switch"></span>-->
+        <!--</label>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="color">-->
+        <!--Follow color:-->
+        <!--<div class="onoffswitch">-->
+            <!--<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="followColor" checked>-->
+            <!--<label class="onoffswitch-label" for="followColor">-->
+                <!--<span class="onoffswitch-inner dark"></span>-->
+                <!--<span class="onoffswitch-switch"></span>-->
+            <!--</label>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="close"><button>close</button></div>
+
+</div>
+<div class="disconnected hide">
+
+    Disconnected, <br> please reload.
+
+</div>
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>
+
